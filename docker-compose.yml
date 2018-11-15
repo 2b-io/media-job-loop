@@ -1,0 +1,19 @@
+version: '3'
+services:
+  job-loop:
+    build: .
+    container_name: media.jobs
+    command: bash -c "tail -f /dev/null"
+    volumes:
+      - .:/usr/src
+      - /usr/src/node_modules
+    ports:
+      - "3006:3006"
+    networks:
+      infra_cdn:
+        aliases:
+          - infra_cdn
+
+networks:
+  infra_cdn:
+    external: true
