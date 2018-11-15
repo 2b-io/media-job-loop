@@ -1,16 +1,17 @@
-import amqp from 'amqplib'
+import rabbitmq from 'infrastructure/rabbit-mq'
 
-import connect from 'services/connection'
-import channel from 'services/channel'
-import config from 'infrastructure/config'
-
-const QUEUE = 'media-queue'
-
-const send = async (msg = 'message') => {
-  const conn = await connect()
-  const ch = await channel.createChannel(conn)
-  await ch.assertQueue(QUEUE, { durable: false })
-  ch.sendToQueue(QUEUE, Buffer.from(JSON.stringify(msg)), {persistent: true})
+const createProducer = async (param) => {
+  const connection = await rabbitmq.connect(param.host)
+  const channel = await connection.createChannel(param.queue)
+  return {
+    sendToQueue() {
+      channel.sendToQueue(
+        param.queue, Buffer.from(
+          JSON.stringify(param.message)
+        ), { persistent: true }
+      )
+    }
+  }
 }
 
-export default send
+export default createProducer

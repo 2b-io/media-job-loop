@@ -1,5 +1,3 @@
-import amqp from 'amqplib'
+import amqplib from 'amqplib'
 
-import config from 'infrastructure/config'
-
-export default connect = amqp.connect(config.amq.host)
+export default amqplib

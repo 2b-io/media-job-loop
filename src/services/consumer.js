@@ -1,16 +1,27 @@
-import amqp from 'amqplib'
-import connect from 'services/connection'
-import channel from 'services/channel'
-import Worker from 'workers'
+import rabbimq from 'infrastructure/rabbit-mq'
 
-const QUEUE = 'media-queue'
+const createConsumer = async (param) => {
+  const connection = await rabbimq.connect(param.host)
+  const channel = await connection.createChannel()
+  const queue = await channel.assertQueue(param.queue)
+  channel.prefetch(1)
+  return {
+    onMessage(callBack) {
+      channel.consume(param.queue, async (msg) => {
+        try {
+          const job = JSON.parse(msg.content.toString())
 
-const createConsumer = async () => {
-  console.log('CONSUMER_START')
-  const conn = await connect()
-  const ch = await channel.createChannel(conn)
-  await ch.assertQueue(QUEUE, { durable: false })
-  await Worker(ch, QUEUE)
+          await callBack(job)
+
+          await channel.ack(msg)
+        } catch (e) {
+          console.log(e)
+        }
+      }, { noAck: false })
+    }
+  }
 }
 
-createConsumer()
+export {
+  createConsumer
+}

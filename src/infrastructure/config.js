@@ -1,4 +1,5 @@
 export default {
+  apiUrl: process.env.API_URL,
   server: {
     base: process.env.BASE_URL,
     bind: process.env.SERVER_BIND,
@@ -6,8 +7,7 @@ export default {
   },
   amq: {
     host: process.env.AMQ_HOST,
+    queue: process.env.AMQ_QUEUE,
     prefix: process.env.AMQ_PREFIX
-  },
-  serverMigration: process.env.SERVER_MIGRATION,
-  projectIdentifier: process.env.PROJECT_IDENTIFIER
+  }
 }

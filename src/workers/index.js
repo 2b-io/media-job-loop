@@ -2,31 +2,57 @@ import request from 'superagent'
 import delay from 'delay'
 import ms from 'ms'
 
-const handleMessage = async (msg) => {
-  const { name, when, payload } = JSON.parse(msg.content.toString())
+import config from 'infrastructure/config'
+import { createConsumer } from 'services/consumer'
+
+const handleJob = (job) => {
+  const { name, payload, when } = job
 
   if (when > Date.now()) {
-    console.log('RE_SEND_MESSAGE')
-    await delay(ms('5s'))
 
-    await request
-      .post(`localhost:3006/api/v1/jobs`)
-      .set('Content-Type', 'application/json')
-      .send({ name, when, payload })
-    return
+    return { name, payload, when }
   }
-  console.log('CHECK_JOB_NAME')
 
-  // call executor
-
-  // add next job
-  // .send({ name, payload, when: when + payload.period })
+  switch (name) {
+    case 'MIGRATE':
+    console.log('MIGRATE');
+    // TODO: execute jobs
+    return {
+      name,
+      payload,
+      when: when + payload.period,
+    }
+  }
 }
 
-const worker = async (channel, queue) => {
-  channel.consume(queue, async (msg) => {
-    await handleMessage(msg)
-  }, {noAck: true})
+const sendJob = async (job) => {
+  await request
+    .post(config.apiUrl)
+    .set('Content-Type', 'application/json')
+    .send(job)
 }
 
-export default worker
+const worker = async () => {
+  const consumer = await createConsumer({
+    host: config.amq.host,
+    queue: config.amq.queue
+  })
+
+  consumer.onMessage(async (job) => {
+    try {
+      const nextJob = await handleJob(job)
+
+      if (nextJob) {
+        await sendJob(nextJob)
+      }
+    } catch (e) {
+      if (job.payload.retry) {
+        await sendJob(job)
+      }
+    } finally {
+      await delay(ms('5s'))
+    }
+  })
+}
+
+worker()

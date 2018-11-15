@@ -26,6 +26,6 @@
   "scripts": {
     "start": "concurrently \"npm run dev:server\" \"npm run dev:worker\"",
     "dev:server": "run.env nodemon --exec babel-node ./src/server",
-    "dev:worker": "run.env nodemon --exec babel-node ./src/services/consumer"
+    "dev:worker": "run.env nodemon --exec babel-node ./src/workers"
   }
 }
