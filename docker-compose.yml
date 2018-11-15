@@ -2,7 +2,7 @@ version: '3'
 services:
   job-loop:
     build: .
-    container_name: media.jobs
+    container_name: media.job-loop
     command: bash -c "tail -f /dev/null"
     volumes:
       - .:/usr/src

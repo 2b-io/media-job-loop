@@ -10,7 +10,9 @@
     "amqplib": "0.5.2",
     "delay": "4.1.0",
     "express": "4.16.4",
+    "morgan": "1.9.1",
     "ms": "2.1.1",
+    "serialize-error": "3.0.0",
     "superagent": "4.0.0-beta.5"
   },
   "devDependencies": {
@@ -24,8 +26,8 @@
     "run.env": "1.1.0"
   },
   "scripts": {
-    "start": "concurrently \"npm run dev:server\" \"npm run dev:worker\"",
+    "start": "concurrently --raw \"npm run dev:server\" \"npm run dev:worker\"",
     "dev:server": "run.env nodemon --exec babel-node ./src/server",
-    "dev:worker": "run.env nodemon --exec babel-node ./src/workers"
+    "dev:worker": "run.env nodemon --exec babel-node ./src/worker"
   }
 }
