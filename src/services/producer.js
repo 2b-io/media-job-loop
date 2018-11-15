@@ -1,13 +1,16 @@
 import amqp from 'amqplib'
 
+import connect from 'services/connection'
+import channel from 'services/channel'
 import config from 'infrastructure/config'
-const queue = 'media-queue'
+
+const QUEUE = 'media-queue'
 
 const send = async (msg = 'message') => {
-  const connection = await amqp.connect('amqp://localhost')
-  const channel = await connection.createChannel()
-  channel.assertQueue(queue, { durable: false })
-  channel.sendToQueue(queue, new Buffer(msg), {persistent: true})
+  const conn = await connect()
+  const ch = await channel.createChannel(conn)
+  await ch.assertQueue(QUEUE, { durable: false })
+  ch.sendToQueue(QUEUE, Buffer.from(JSON.stringify(msg)), {persistent: true})
 }
 
 export default send

@@ -1,6 +1,6 @@
 import request from 'superagent'
 
-import config from './config'
+import config from 'infrastructure/config'
 
 const migrate = async (maxKeys) => {
   console.log('maxKeys', maxKeys)

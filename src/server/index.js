@@ -1,4 +1,3 @@
-import rpc from 'services'
 import config from 'infrastructure/config'
 
 import app from './app'

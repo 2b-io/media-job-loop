@@ -1,11 +1,16 @@
 import amqp from 'amqplib'
+import connect from 'services/connection'
+import channel from 'services/channel'
+import Worker from 'workers'
 
-const queue = 'media-queue'
+const QUEUE = 'media-queue'
 
-const response = async () => {
-  const connection = await amqp.connect('amqp://localhost')
-  const channel = await connection.createChannel()
-  await channel.assertQueue(queue, { durable: false })
+const createConsumer = async () => {
+  console.log('CONSUMER_START')
+  const conn = await connect()
+  const ch = await channel.createChannel(conn)
+  await ch.assertQueue(QUEUE, { durable: false })
+  await Worker(ch, QUEUE)
 }
 
-export default response
+createConsumer()
