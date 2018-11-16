@@ -47,7 +47,7 @@ const migrate = async (job) => {
     } else {
       return {
         name,
-        when: Date.now() + ms('5m'),
+        when: Date.now() + ms('3d'),
         payload: {
           maxKeys,
           projectIdentifier
