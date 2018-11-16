@@ -40,8 +40,6 @@ const updateStatusProject = async (job) => {
 
       console.log('UPDATE_SUCCESS')
       return {
-        name,
-        when: Date.now() + ms('5m'),
         payload: {
           retry: false
         }
@@ -49,8 +47,11 @@ const updateStatusProject = async (job) => {
     } else {
       console.log('RE_UPDATE')
       return {
+        name,
+        when: Date.now() + ms('5s'),
         payload: {
-          projectIdentifier
+          projectIdentifier,
+          retry: true
         }
       }
     }
