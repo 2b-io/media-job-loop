@@ -4,8 +4,9 @@ import ms from 'ms'
 
 import config from 'infrastructure/config'
 import { createConsumer } from 'services/consumer'
+import migrate from './jobs/migrate'
 
-const handleJob = (job) => {
+const handleJob = async (job) => {
   const { name, payload, when } = job
 
   console.log(`HANDLE JOB: ${ name }, SCHEDULED WHEN: ${ new Date(when).toISOString() } `)
@@ -21,13 +22,8 @@ const handleJob = (job) => {
   // TODO: execute job
   switch (name) {
     case 'MIGRATE': {
-      console.log('MIGRATE');
-
-      return {
-        name,
-        payload,
-        when: when + (payload.period || 0),
-      }
+      console.log('MIGRATE')
+      return await migrate(job)
     }
   }
 }

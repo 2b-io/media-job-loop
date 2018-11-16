@@ -1,6 +1,6 @@
 version: '3'
 services:
-  job-loop:
+  media-job-loop:
     build: .
     container_name: media.job-loop
     command: bash -c "tail -f /dev/null"
@@ -12,7 +12,7 @@ services:
     networks:
       infra_cdn:
         aliases:
-          - infra_cdn
+          - media-job-loop
 
 networks:
   infra_cdn:

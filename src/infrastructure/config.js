@@ -1,5 +1,6 @@
 export default {
   apiUrl: process.env.API_URL,
+  migrateSever: process.env.MIGRATE_SEVER,
   server: {
     base: process.env.BASE_URL,
     bind: process.env.SERVER_BIND,
