@@ -1,5 +1,6 @@
 import ms from 'ms'
 
+import cloudfront from 'services/cloudfront'
 import da from 'services/da'
 
 const updateStatusProject = async (job) => {
@@ -23,7 +24,7 @@ const updateStatusProject = async (job) => {
 
     const {
       Distribution: distribution
-    } = await da.getDistribution(infraIdentifier)
+    } = await cloudfront.getDistribution(infraIdentifier)
 
     const {
       Status: infraStatus,
@@ -39,19 +40,14 @@ const updateStatusProject = async (job) => {
       await da.updateStatusProject(projectID, projectStatus, infraConfig.Enabled)
 
       console.log('UPDATE_SUCCESS')
-      return {
-        payload: {
-          retry: false
-        }
-      }
+      return null
     } else {
-      console.log('RE_UPDATE')
+      console.log('RETRY_UPDATE')
       return {
         name,
-        when: Date.now() + ms('5s'),
+        when: Date.now() + ms('5m'),
         payload: {
-          projectIdentifier,
-          retry: true
+          projectIdentifier
         }
       }
     }

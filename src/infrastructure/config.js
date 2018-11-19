@@ -12,5 +12,12 @@ export default {
     host: process.env.AMQ_HOST,
     queue: process.env.AMQ_QUEUE,
     prefix: process.env.AMQ_PREFIX
+  },
+  aws: {
+    cloudFront: {
+      region: process.env.AWS_CLOUDFRONT_REGION,
+      accessKeyId: process.env.AWS_CLOUDFRONT_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_CLOUDFRONT_SECRET_ACCESS_KEY
+    }
   }
 }
