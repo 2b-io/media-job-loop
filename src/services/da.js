@@ -18,7 +18,7 @@ const getProjectByIdentifier = async (identifier) => {
   })
 }
 
-const getInfrastructure= async (projectID) => {
+const getInfrastructureByProject= async (projectID) => {
   return await infrastructure.findOne({
     project: projectID
   })
@@ -27,5 +27,5 @@ const getInfrastructure= async (projectID) => {
 export default {
   updateStatusProject,
   getProjectByIdentifier,
-  getInfrastructure
+  getInfrastructureByProject
 }
