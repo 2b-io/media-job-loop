@@ -18,6 +18,11 @@ export default {
       region: process.env.AWS_CLOUDFRONT_REGION,
       accessKeyId: process.env.AWS_CLOUDFRONT_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_CLOUDFRONT_SECRET_ACCESS_KEY
+    },
+    cloudWatch: {
+      region: process.env.AWS_CLOUDWATCH_REGION,
+      accessKeyId: process.env.AWS_CLOUDWATCH_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_CLOUDWATCH_SECRET_ACCESS_KEY
     }
   }
 }
