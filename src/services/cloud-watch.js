@@ -55,7 +55,7 @@ const formatResponseData = (responseData, { startTime, endTime, period }) => {
   )
 
   const datapoints = originRangeTimes.map((time) => ({
-    timestamp: time,
+    timestamp: new Date(Number(time)).toISOString(),
     value: indices[ time ] || 0
   }))
 

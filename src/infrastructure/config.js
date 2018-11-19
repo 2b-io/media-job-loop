@@ -23,6 +23,10 @@ export default {
       region: process.env.AWS_CLOUDWATCH_REGION,
       accessKeyId: process.env.AWS_CLOUDWATCH_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_CLOUDWATCH_SECRET_ACCESS_KEY
+    },
+    elasticSearch: {
+      host: process.env.AWS_ELASTIC_SEARCH_HOST,
+      prefix: process.env.AWS_ELASTIC_SEARCH_PREFIX
     }
   }
 }

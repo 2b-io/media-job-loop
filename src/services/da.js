@@ -1,4 +1,3 @@
-import Report from 'server/models/report'
 import Project from 'server/models/project'
 import infrastructure from 'server/models/infrastructure'
 
@@ -31,22 +30,15 @@ const getInfrastructure= async (distributionIdentifier) => {
   })
 }
 
-const updateMetricDataReport = async (name, projectID, datapoints) => {
-  return await Report.findOneAndUpdate({
-    name,
-    project: projectID
-  }, {
-    datapoints
-  }, {
-    upsert: true,
-    new: true
-  }).lean()
+const getProject = async (projectID) => {
+  return await Project.findOne({
+    _id: projectID
+  })
 }
-
 export default {
   updateStatusProject,
   getProjectByIdentifier,
   getInfrastructureByProject,
   getInfrastructure,
-  updateMetricDataReport
+  getProject
 }

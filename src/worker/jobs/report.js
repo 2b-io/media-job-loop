@@ -2,6 +2,8 @@ import ms from 'ms'
 
 import cloudWatch from 'services/cloud-watch'
 import da from 'services/da'
+import elasticSearch from 'services/elastic-search'
+import reportMapping from 'server/mapping/report'
 
 const updateReport = async (job) => {
   const {
@@ -28,9 +30,35 @@ const updateReport = async (job) => {
     })
 
     const { project: projectID } = await da.getInfrastructure(distributionIdentifier)
+    const { identifier: projectIdentifier } = await da.getProject(projectID)
 
-    await da.updateMetricDataReport(metricName, projectID, datapoints)
+    if (datapoints.length) {
+      await datapoints.reduce(
+        async (previousJob, datapoint) => {
+          await previousJob
 
+          const { timestamp, value } = datapoint
+
+          try {
+            await elasticSearch.initMapping(
+              projectIdentifier,
+              metricName,
+              reportMapping
+            )
+
+            return await elasticSearch.createOrUpdate(
+              projectIdentifier,
+              metricName,
+              timestamp,
+              datapoint
+            )
+          } catch (error) {
+            console.error(error)
+          }
+        },
+        Promise.resolve()
+      )
+    }
     console.log('UPDATE_METRIC_DATA_SUCCESS')
 
     return {
@@ -40,8 +68,8 @@ const updateReport = async (job) => {
         distributionIdentifier,
         name: metricName,
         period,
-        startTime: startTime + ms('1h'),
-        endTime: endTime + ms('1h')
+        startTime: startTime,
+        endTime: Date.now() + ms('1h')
       }
     }
   } catch (error) {
