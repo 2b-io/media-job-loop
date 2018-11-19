@@ -1,6 +1,6 @@
 import ms from 'ms'
 
-import cloudfront from 'services/cloudfront'
+import cloudfront from 'services/cloud-front'
 import da from 'services/da'
 
 const updateStatusProject = async (job) => {
