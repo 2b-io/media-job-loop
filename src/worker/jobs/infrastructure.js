@@ -20,7 +20,7 @@ const updateStatusProject = async (job) => {
 
     const {
       identifier: infraIdentifier
-    } = await da.getInfrastructure(projectID)
+    } = await da.getInfrastructureByProject(projectID)
 
     const {
       Distribution: distribution
