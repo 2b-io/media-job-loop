@@ -1,18 +1,21 @@
 import config from 'infrastructure/config'
-import { createProducer } from 'services/producer'
+import { createProducer } from 'services/queue/producer'
 
 import app from './app'
 
 const {
-  amq: { host, queue },
+  amq: { host, queue, prefix },
   server: { port, bind }
 } = config
 
 const main = async () => {
-  const producer = await createProducer({
+  const producer = createProducer({
     host,
-    queue
+    queue,
+    prefix
   })
+
+  await producer.connect()
 
   app.set('producer', producer)
 
