@@ -5,34 +5,46 @@ import da from 'services/da'
 import elasticSearch from 'services/elastic-search'
 import reportMapping from 'server/mapping/report'
 
+const PERIOD = 60
+const MAX_DATAPOINT = 1440
+
 const updateReport = async (job) => {
   const {
     name,
     when,
     payload: {
-      distributionIdentifier,
-      name: metricName,
-      period,
-      startTime,
-      endTime
+      projectIdentifier,
+      metricName,
+      startTime
     }
   } = job
+
+  const maxEndTime = startTime + (PERIOD * 1000 * MAX_DATAPOINT)
+  const now = Date.now()
+
+  const endTime = maxEndTime < now ? maxEndTime : now
 
   console.log('GET_DATA_FROM_CLOUD_WATCH ...')
 
   try {
+    const { _id: projectId } = await da.getProjectByIdentifier(projectIdentifier)
+    const { identifier: distributionIdentifier } = await da.getInfrastructureByProject(projectId)
+
     const { datapoints } = await cloudWatch.getMetric({
       distributionIdentifier,
       name: metricName,
-      period,
+      period: PERIOD,
       startTime,
       endTime
     })
 
-    const { project: projectID } = await da.getInfrastructure(distributionIdentifier)
-    const { identifier: projectIdentifier } = await da.getProject(projectID)
-
     if (datapoints.length) {
+      await elasticSearch.initMapping(
+        projectIdentifier,
+        metricName,
+        reportMapping
+      )
+
       await datapoints.reduce(
         async (previousJob, datapoint) => {
           await previousJob
@@ -40,17 +52,13 @@ const updateReport = async (job) => {
           const { timestamp, value } = datapoint
 
           try {
-            await elasticSearch.initMapping(
-              projectIdentifier,
-              metricName,
-              reportMapping
-            )
-
             return await elasticSearch.createOrUpdate(
               projectIdentifier,
               metricName,
-              timestamp,
-              datapoint
+              timestamp, {
+                timestamp: new Date(timestamp),
+                value
+              }
             )
           } catch (error) {
             console.error(error)
@@ -63,13 +71,11 @@ const updateReport = async (job) => {
 
     return {
       name,
-      when: when + ms('1h'),
+      when: maxEndTime < now ? now : now + ms('1h'),
       payload: {
-        distributionIdentifier,
-        name: metricName,
-        period,
-        startTime: startTime,
-        endTime: Date.now() + ms('1h')
+        projectIdentifier,
+        metricName,
+        startTime: endTime - ms('5m'),
       }
     }
   } catch (error) {

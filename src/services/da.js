@@ -1,9 +1,9 @@
 import Project from 'server/models/project'
 import infrastructure from 'server/models/infrastructure'
 
-const updateStatusProject = async (projectID, status, isActive) => {
+const updateStatusProject = async (projectId, status, isActive) => {
   return await Project.findOneAndUpdate({
-    _id: projectID
+    _id: projectId
   }, {
     status,
     isActive
@@ -18,23 +18,24 @@ const getProjectByIdentifier = async (identifier) => {
   })
 }
 
-const getInfrastructureByProject= async (projectID) => {
+const getInfrastructureByProject = async (projectId) => {
   return await infrastructure.findOne({
-    project: projectID
+    project: projectId
   })
 }
 
-const getInfrastructure= async (distributionIdentifier) => {
+const getInfrastructure = async (distributionIdentifier) => {
   return await infrastructure.findOne({
     identifier: distributionIdentifier
   })
 }
 
-const getProject = async (projectID) => {
+const getProject = async (projectId) => {
   return await Project.findOne({
-    _id: projectID
+    _id: projectId
   })
 }
+
 export default {
   updateStatusProject,
   getProjectByIdentifier,
