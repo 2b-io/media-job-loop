@@ -43,6 +43,8 @@ const checkInfrastructure = async (job) => {
         return null
       }
       console.log('RUN_SYNC_S3_TO_ES_&&_GET_METRIC_DATA')
+      const startTime = Date.now()
+
       return [
         {
           name: 'SYNC_S3_TO_ES',
@@ -58,7 +60,7 @@ const checkInfrastructure = async (job) => {
           payload: {
             projectIdentifier,
             metricName: 'BYTES_DOWNLOADED',
-            startTime: Date.now()
+            startTime
           }
         },
         {
@@ -67,7 +69,7 @@ const checkInfrastructure = async (job) => {
           payload: {
             projectIdentifier,
             metricName: 'REQUESTS',
-            startTime: Date.now()
+            startTime
           }
         }
       ]

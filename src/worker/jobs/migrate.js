@@ -13,6 +13,7 @@ const syncS3ToEs = async (job) => {
     payload: {
       projectIdentifier,
       continuationToken,
+      lastSynchronized,
       maxKeys
     }
   } = job
@@ -51,16 +52,18 @@ const syncS3ToEs = async (job) => {
           continuationToken: nextContinuationToken,
           projectIdentifier,
           maxKeys,
+          lastSynchronized: lastSynchronized || Date.now(),
           retry: true
         }
       }
     } else {
       return {
-        name,
-        when: Date.now() + ms('3d'),
+        name: 'PRUNE_ES',
+        when: Date.now(),
         payload: {
           maxKeys,
           projectIdentifier,
+          lastSynchronized,
           retry: true
         }
       }
