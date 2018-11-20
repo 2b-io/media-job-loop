@@ -41,16 +41,18 @@ const migrate = async (job) => {
         payload: {
           continuationToken: nextContinuationToken,
           projectIdentifier,
-          maxKeys
+          maxKeys,
+          retry: true
         }
       }
     } else {
       return {
         name,
-        when: Date.now() + ms('5m'),
+        when: Date.now() + ms('3d'),
         payload: {
           maxKeys,
-          projectIdentifier
+          projectIdentifier,
+          retry: true
         }
       }
     }

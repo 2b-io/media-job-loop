@@ -8,8 +8,11 @@
   "license": "MIT",
   "dependencies": {
     "amqplib": "0.5.2",
+    "aws-sdk": "2.358.0",
     "delay": "4.1.0",
+    "elasticsearch": "15.2.0",
     "express": "4.16.4",
+    "mongoose": "5.3.12",
     "morgan": "1.9.1",
     "ms": "2.1.1",
     "serialize-error": "3.0.0",

@@ -5,6 +5,8 @@ import ms from 'ms'
 import config from 'infrastructure/config'
 import { createConsumer } from 'services/consumer'
 import migrate from './jobs/migrate'
+import infrastructure from './jobs/infrastructure'
+import report from './jobs/report'
 
 const handleJob = async (job) => {
   const { name, payload, when } = job
@@ -24,6 +26,14 @@ const handleJob = async (job) => {
     case 'MIGRATE': {
       console.log('MIGRATE')
       return await migrate(job)
+    }
+    case 'UPDATE_STATUS_INFRASTRUCTURE': {
+      console.log('UPDATE_STATUS_INFRASTRUCTURE')
+      return await infrastructure.updateStatusProject(job)
+    }
+    case 'UPDATE_REPORT': {
+      console.log('UPDATE_REPORT')
+      return await report.updateReport(job)
     }
   }
 }
