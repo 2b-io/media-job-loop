@@ -8,7 +8,7 @@ import reportMapping from 'server/mapping/report'
 const PERIOD = 60
 const MAX_DATAPOINT = 1440
 
-const updateReport = async (job) => {
+const getMetricData = async (job) => {
   const {
     name,
     when,
@@ -27,7 +27,12 @@ const updateReport = async (job) => {
   console.log('GET_DATA_FROM_CLOUD_WATCH ...')
 
   try {
-    const { _id: projectId } = await da.getProjectByIdentifier(projectIdentifier)
+    const { _id: projectId, isActive } = await da.getProjectByIdentifier(projectIdentifier)
+
+    if (!isActive) {
+      return null
+    }
+
     const { identifier: distributionIdentifier } = await da.getInfrastructureByProject(projectId)
 
     const { datapoints } = await cloudWatch.getMetric({
@@ -84,5 +89,5 @@ const updateReport = async (job) => {
 }
 
 export default {
-  updateReport
+  getMetricData
 }

@@ -16,33 +16,44 @@ const handleJob = async (job) => {
   if (when > Date.now()) {
     console.log(`NOT IN RIGHT TIME..., PUT BACK QUEUE`)
 
-    return { name, payload, when }
+    return [ { name, payload, when } ]
   }
 
   console.log(`EXECUTE JOB ${ name }`)
 
   // TODO: execute job
   switch (name) {
-    case 'MIGRATE': {
-      console.log('MIGRATE')
-      return await migrate(job)
+    case 'SYNC_S3_TO_ES': {
+      console.log('SYNC_S3_TO_ES')
+      return await migrate.syncS3ToEs(job)
     }
-    case 'UPDATE_STATUS_INFRASTRUCTURE': {
-      console.log('UPDATE_STATUS_INFRASTRUCTURE')
-      return await infrastructure.updateStatusProject(job)
+    case 'CHECK_INFRASTRUCTURE': {
+      console.log('CHECK_INFRASTRUCTURE')
+      return await infrastructure.checkInfrastructure(job)
     }
-    case 'UPDATE_REPORT': {
-      console.log('UPDATE_REPORT')
-      return await report.updateReport(job)
+    case 'GET_METRIC_DATA': {
+      console.log('GET_METRIC_DATA')
+      return await report.getMetricData(job)
     }
   }
 }
 
-const sendJob = async (job) => {
-  await request
-    .post(`${ config.apiUrl }/jobs`)
-    .set('Content-Type', 'application/json')
-    .send(job)
+const sendJobs = async (jobs) => {
+  await jobs.reduce(
+    async (previousJob, job) => {
+      await previousJob
+
+      try {
+      return await request
+          .post(`${ config.apiUrl }/jobs`)
+          .set('Content-Type', 'application/json')
+          .send(job)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    Promise.resolve()
+  )
 }
 
 const worker = async () => {
@@ -55,14 +66,14 @@ const worker = async () => {
     console.log(`RECEIVED JOB AT: ${ new Date().toISOString() }`)
 
     try {
-      const nextJob = await handleJob(job)
+      const nextJobs = await handleJob(job)
 
-      if (nextJob) {
-        await sendJob(nextJob)
+      if (nextJobs.length) {
+        await sendJobs(nextJobs)
       }
     } catch (e) {
       if (job.payload.retry) {
-        await sendJob(job)
+        await sendJobs([ job ])
       }
     } finally {
       await delay(ms('5s'))
