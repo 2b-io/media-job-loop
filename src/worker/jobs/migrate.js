@@ -2,8 +2,11 @@ import ms from 'ms'
 import request from 'superagent'
 
 import config from 'infrastructure/config'
+import da from 'services/da'
 
-const migrate = async (job) => {
+const PREFIX = config.aws.elasticSearch.prefix
+
+const syncS3ToEs = async (job) => {
   const {
     name,
     when,
@@ -17,6 +20,12 @@ const migrate = async (job) => {
   console.log('Run migration data please wait ...')
 
   try {
+    const { isActive } = await da.getProjectByIdentifier(projectIdentifier)
+
+    if (!isActive) {
+      return null
+    }
+
     const {
       body: {
         nextContinuationToken,
@@ -61,4 +70,6 @@ const migrate = async (job) => {
   }
 }
 
-export default migrate
+export default {
+  syncS3ToEs
+}

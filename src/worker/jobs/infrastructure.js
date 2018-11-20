@@ -3,7 +3,7 @@ import ms from 'ms'
 import cloudfront from 'services/cloud-front'
 import da from 'services/da'
 
-const updateStatusProject = async (job) => {
+const checkInfrastructure = async (job) => {
   try {
     const {
       name,
@@ -37,19 +37,52 @@ const updateStatusProject = async (job) => {
           'INITIALIZING' : 'UPDATING'
       ) :  infraStatus.toUpperCase()
 
-      await da.updateStatusProject(projectID, projectStatus, infraConfig.Enabled)
+      const { isActive } = await da.updateStatusProject(projectID, projectStatus, infraConfig.Enabled)
+      console.log('isActive', isActive);
+      if (!isActive) {
+        return null
+      }
 
-      console.log('UPDATE_SUCCESS')
-      return null
+      console.log('ACTIVE JOB SYNC_S3_TO_ES && GET_METRIC_DATA')
+      return [
+        {
+          name: 'SYNC_S3_TO_ES',
+          when: Date.now(),
+          payload: {
+            projectIdentifier,
+            startTime: Date.now()
+          }
+        },
+        {
+          name: 'GET_METRIC_DATA',
+          when: Date.now(),
+          payload: {
+            projectIdentifier,
+            metricName: 'BYTES_DOWNLOADED',
+            startTime: Date.now()
+          }
+        },
+        {
+          name: 'GET_METRIC_DATA',
+          when: Date.now(),
+          payload: {
+            projectIdentifier,
+            metricName: 'REQUESTS',
+            startTime: Date.now()
+          }
+        }
+      ]
     } else {
       console.log('RETRY_UPDATE')
-      return {
-        name,
-        when: Date.now() + ms('5m'),
-        payload: {
-          projectIdentifier
+      return [
+        {
+          name,
+          when: Date.now() + ms('5m'),
+          payload: {
+            projectIdentifier
+          }
         }
-      }
+      ]
     }
   } catch (error) {
     console.log(error)
@@ -57,5 +90,5 @@ const updateStatusProject = async (job) => {
 }
 
 export default {
-  updateStatusProject
+  checkInfrastructure
 }
