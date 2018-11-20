@@ -38,12 +38,11 @@ const checkInfrastructure = async (job) => {
       ) :  infraStatus.toUpperCase()
 
       const { isActive } = await da.updateStatusProject(projectID, projectStatus, infraConfig.Enabled)
-      console.log('isActive', isActive);
+
       if (!isActive) {
         return null
       }
-
-      console.log('ACTIVE JOB SYNC_S3_TO_ES && GET_METRIC_DATA')
+      console.log('RUN_SYNC_S3_TO_ES_&&_GET_METRIC_DATA')
       return [
         {
           name: 'SYNC_S3_TO_ES',

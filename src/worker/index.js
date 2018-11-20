@@ -63,7 +63,6 @@ const worker = async () => {
   })
 
   consumer.onMessage(async (job) => {
-
     console.log(`RECEIVED JOB AT: ${ new Date().toISOString() }`)
 
     try {
@@ -72,10 +71,9 @@ const worker = async () => {
       if (nextJobs.length) {
         await sendJobs(nextJobs)
       }
-
     } catch (e) {
       if (job.payload.retry) {
-        await sendJobs(job)
+        await sendJobs([ job ])
       }
     } finally {
       await delay(ms('5s'))
