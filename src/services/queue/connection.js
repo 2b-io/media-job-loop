@@ -13,6 +13,10 @@ export default class Connection {
       retryCount: 0,
       channel: null,
       queue: `${ props.prefix }${ props.queue }`,
+      deadLetter: {
+        exchange: `${ props.prefix }${ props.queue }.dead-letter`,
+        queue: `${ props.prefix }${ props.queue }.dead-letter`
+      },
       isReady: false
     }
   }
@@ -36,8 +40,20 @@ export default class Connection {
       // set state
       this.setChannel(channel)
 
+      // dead-letter
+      await channel.assertExchange(this.state.deadLetter.exchange, 'fanout')
+      await channel.assertQueue(this.state.deadLetter.queue, {
+        durable: true
+      })
+      await channel.bindQueue(this.state.deadLetter.queue, this.state.deadLetter.exchange)
+
       // assert queue
-      await channel.assertQueue(this.state.queue)
+      await channel.assertQueue(this.state.queue, {
+        durable: true,
+        arguments: {
+          'x-dead-letter-exchange': this.state.deadLetter.exchange
+        }
+      })
     } catch (e) {
       console.error('CONNECT FAILED', e)
 

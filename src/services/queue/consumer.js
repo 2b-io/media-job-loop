@@ -21,9 +21,10 @@ class Consumer extends Connection {
     const { channel } = this.state
 
     await channel.consume(this.state.queue, async (msg) => {
-      console.log(msg)
+      console.log('RECEIVE')
 
-      await channel.ack(msg)
+      // await channel.ack(msg)
+      await channel.reject(msg, false)
     }, {
       noAck: false
     })
