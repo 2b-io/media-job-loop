@@ -49,7 +49,7 @@ const checkInfrastructure = async (job) => {
           when: Date.now(),
           payload: {
             projectIdentifier,
-            startTime: Date.now()
+            maxKeys: 10
           }
         },
         {
