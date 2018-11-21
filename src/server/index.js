@@ -1,5 +1,5 @@
 import config from 'infrastructure/config'
-import { createProducer } from 'services/queue/producer'
+import { createProducer } from 'services/work-queue/producer'
 
 import app from './app'
 

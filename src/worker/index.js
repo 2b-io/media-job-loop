@@ -1,5 +1,29 @@
+import delay from 'delay'
+import ms from 'ms'
+import request from 'superagent'
+
 import config from 'infrastructure/config'
-import { createConsumer } from 'services/queue/consumer'
+import { createConsumer } from 'services/work-queue/consumer'
+
+const handleJob = async (job) => {
+  await delay(ms('3s'))
+
+  return [ {
+    ...job,
+    when: Date.now() + ms('30s')
+  } ]
+}
+
+const sendJobs = async (jobs) => {
+  await Promise.all(
+    jobs.map(
+      (job) => request
+        .post(`${ config.apiUrl }/jobs`)
+        .set('content-type', 'application/json')
+        .send(job)
+    )
+  )
+}
 
 const main = async () => {
   const consumer = createConsumer({
@@ -8,15 +32,20 @@ const main = async () => {
     prefix: config.amq.prefix
   })
 
-  console.log(consumer)
-
   await consumer
     .onReceive(async (job) => {
-      console.log('RECEIVE JOB', job)
+      console.log(`RECEIVED JOB [${ job.name }] AT: ${ new Date().toISOString() }, SCHEDULED WHEN: ${ new Date(job.when).toISOString() } `)
+
+      const nextJobs = job.when > Date.now() ?
+        [ job ] : (await handleJob(job))
+
+      if (nextJobs && nextJobs.length) {
+        await sendJobs(nextJobs)
+      }
     })
     .connect()
 
-  console.log('WORKER BOOTSTRAPPED...')
+  console.log('WORKER BOOTSTRAPPED!')
 }
 
 main()

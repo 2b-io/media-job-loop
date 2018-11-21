@@ -8,8 +8,6 @@ class Producer extends Connection {
   async send(msg) {
     const { isReady, channel, queue } = this.state
 
-    console.log(isReady, channel, queue)
-
     if (!isReady) {
       throw 'Not connect to RabbitMQ'
     }
