@@ -28,5 +28,9 @@ export default {
       host: process.env.AWS_ELASTIC_SEARCH_HOST,
       prefix: process.env.AWS_ELASTIC_SEARCH_PREFIX
     }
+  },
+  pulling: {
+    shortBreak: process.env.PULLING_SHORT_BREAK,
+    longBreak: process.env.PULLING_LONG_BREAK
   }
 }

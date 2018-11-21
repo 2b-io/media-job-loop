@@ -7,18 +7,18 @@ import da from 'services/da'
 const PREFIX = config.aws.elasticSearch.prefix
 
 export default async (job) => {
+  console.log('SYNC_S3_TO_ES...')
+
   const {
     name,
     when,
     payload: {
       projectIdentifier,
       continuationToken,
-      lastSynchronized,
+      lastSynchronized = Date.now(),
       maxKeys
     }
   } = job
-  console.log('maxKeys', maxKeys)
-  console.log('Run migration data please wait ...')
 
   const { isActive } = await da.getProjectByIdentifier(projectIdentifier)
 
@@ -40,19 +40,18 @@ export default async (job) => {
       continuationToken: continuationToken || null,
       maxKeys
     })
-  console.log("MESSAGE =>>", message)
-  console.log("IS_TRUNCATED =>>", isTruncated)
+
+  console.log('SYNC_S3_TO_ES... DONE!')
 
   if (isTruncated) {
     return {
       name,
-      when,
+      when: Date.now(),
       payload: {
         continuationToken: nextContinuationToken,
         projectIdentifier,
         maxKeys,
-        lastSynchronized: lastSynchronized || Date.now(),
-        retry: true
+        lastSynchronized
       }
     }
   } else {
@@ -62,8 +61,7 @@ export default async (job) => {
       payload: {
         maxKeys,
         projectIdentifier,
-        lastSynchronized,
-        retry: true
+        lastSynchronized
       }
     }
   }

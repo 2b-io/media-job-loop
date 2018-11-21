@@ -5,7 +5,11 @@ import Connection from './connection'
 
 class Consumer extends Connection {
   constructor(props) {
-    super(props)
+    super({
+      shortBreak: '1s',
+      longBreak: '5s',
+      ...props
+    })
   }
 
   onReceive(cb) {
@@ -31,9 +35,9 @@ class Consumer extends Connection {
       })
 
       if (!msg) {
-        console.log('NO MESSAGE, REST FOR 5s...')
+        console.log(`NO MESSAGE, REST FOR ${ this.props.longBreak }...`)
 
-        await delay(ms('5s'))
+        await delay(ms(this.props.longBreak))
 
         this.consume()
 
@@ -50,8 +54,8 @@ class Consumer extends Connection {
         await channel.ack(msg)
         console.log('MESSAGE ACKNOWLEDGED')
 
-        console.log('WAIT 5s THEN CONTINUE...')
-        await delay(ms('5s'))
+        console.log(`WAIT ${ this.props.shortBreak } THEN CONTINUE...`)
+        await delay(ms(this.props.shortBreak))
 
         this.consume()
       } catch (e) {

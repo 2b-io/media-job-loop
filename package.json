@@ -8,6 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "amqplib": "0.5.2",
+    "as-array": "2.0.0",
     "aws-sdk": "2.358.0",
     "delay": "4.1.0",
     "elasticsearch": "15.2.0",

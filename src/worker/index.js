@@ -1,3 +1,4 @@
+import asArray from 'as-array'
 import request from 'superagent'
 
 import config from 'infrastructure/config'
@@ -36,15 +37,19 @@ const main = async () => {
   const consumer = createConsumer({
     host: config.amq.host,
     queue: config.amq.queue,
-    prefix: config.amq.prefix
+    prefix: config.amq.prefix,
+    shortBreak: config.pulling.shortBreak,
+    longBreak: config.pulling.longBreak
   })
 
   await consumer
     .onReceive(async (job) => {
       console.log(`RECEIVED JOB [${ job.name }] AT: ${ new Date().toISOString() }, SCHEDULED WHEN: ${ new Date(job.when).toISOString() } `)
 
-      const nextJobs = job.when > Date.now() ?
-        [ job ] : (await handleJob(job))
+      const nextJobs = asArray(
+        job.when > Date.now() ?
+          job : (await handleJob(job))
+      )
 
       if (nextJobs && nextJobs.length) {
         await sendJobs(nextJobs)
