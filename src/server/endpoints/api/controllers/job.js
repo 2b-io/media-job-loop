@@ -9,7 +9,7 @@ export default {
     try {
       const producer = req.app.get('producer')
 
-      await producer.sendMessage({
+      await producer.send({
         name,
         when,
         payload

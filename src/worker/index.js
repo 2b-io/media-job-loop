@@ -1,84 +1,63 @@
+import asArray from 'as-array'
 import request from 'superagent'
-import delay from 'delay'
-import ms from 'ms'
 
 import config from 'infrastructure/config'
-import { createConsumer } from 'services/consumer'
-import migrate from './jobs/migrate'
-import infrastructure from './jobs/infrastructure'
-import report from './jobs/report'
+import { createConsumer } from 'services/work-queue/consumer'
+
+import * as handlers from './handlers'
+
+const HANDLERS = {
+  'SYNC_S3_TO_ES': handlers.syncS3ToEs,
+  'CHECK_INFRASTRUCTURE': handlers.checkInfrastructure,
+  'GET_METRIC_DATA': handlers.getMetricData
+}
 
 const handleJob = async (job) => {
-  const { name, payload, when } = job
+  const handler = HANDLERS[ job.name ]
 
-  console.log(`HANDLE JOB: ${ name }, SCHEDULED WHEN: ${ new Date(when).toISOString() } `)
-
-  if (when > Date.now()) {
-    console.log(`NOT IN RIGHT TIME..., PUT BACK QUEUE`)
-
-    return [ { name, payload, when } ]
+  if (!handler || typeof handler !== 'function') {
+    return
   }
 
-  console.log(`EXECUTE JOB ${ name }`)
-
-  // TODO: execute job
-  switch (name) {
-    case 'SYNC_S3_TO_ES': {
-      console.log('SYNC_S3_TO_ES')
-      return await migrate.syncS3ToEs(job)
-    }
-    case 'CHECK_INFRASTRUCTURE': {
-      console.log('CHECK_INFRASTRUCTURE')
-      return await infrastructure.checkInfrastructure(job)
-    }
-    case 'GET_METRIC_DATA': {
-      console.log('GET_METRIC_DATA')
-      return await report.getMetricData(job)
-    }
-  }
+  return await handler(job)
 }
 
 const sendJobs = async (jobs) => {
-  await jobs.reduce(
-    async (previousJob, job) => {
-      await previousJob
-
-      try {
-      return await request
-          .post(`${ config.apiUrl }/jobs`)
-          .set('Content-Type', 'application/json')
-          .send(job)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    Promise.resolve()
+  await Promise.all(
+    jobs.map(
+      (job) => request
+        .post(`${ config.apiUrl }/jobs`)
+        .set('content-type', 'application/json')
+        .send(job)
+    )
   )
 }
 
-const worker = async () => {
-  const consumer = await createConsumer({
+const main = async () => {
+  const consumer = createConsumer({
     host: config.amq.host,
-    queue: config.amq.queue
+    queue: config.amq.queue,
+    prefix: config.amq.prefix,
+    shortBreak: config.pulling.shortBreak,
+    longBreak: config.pulling.longBreak
   })
 
-  consumer.onMessage(async (job) => {
-    console.log(`RECEIVED JOB AT: ${ new Date().toISOString() }`)
+  await consumer
+    .onReceive(async (job) => {
+      console.log(`RECEIVED JOB [${ job.name }] AT: ${ new Date().toISOString() }, SCHEDULED WHEN: ${ new Date(job.when).toISOString() } `)
 
-    try {
-      const nextJobs = await handleJob(job)
+      const nextJobs = asArray(
+        job.when > Date.now() ?
+          job : (await handleJob(job))
+      )
 
-      if (nextJobs.length) {
+      if (nextJobs && nextJobs.length) {
         await sendJobs(nextJobs)
       }
-    } catch (e) {
-      if (job.payload.retry) {
-        await sendJobs([ job ])
-      }
-    } finally {
-      await delay(ms('5s'))
-    }
-  })
+    })
+    .connect()
+
+  console.log('WORKER BOOTSTRAPPED!')
 }
 
-worker()
+main()

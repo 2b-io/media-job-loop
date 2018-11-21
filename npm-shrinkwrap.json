@@ -926,6 +926,11 @@
       "integrity": "sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=",
       "dev": true
     },
+    "as-array": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/as-array/-/as-array-2.0.0.tgz",
+      "integrity": "sha1-TwSAXYf4/OjlEbwhCPjl46KH1Uc="
+    },
     "assign-symbols": {
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/assign-symbols/-/assign-symbols-1.0.0.tgz",
