@@ -1,17 +1,24 @@
-import delay from 'delay'
-import ms from 'ms'
 import request from 'superagent'
 
 import config from 'infrastructure/config'
 import { createConsumer } from 'services/work-queue/consumer'
 
-const handleJob = async (job) => {
-  await delay(ms('3s'))
+import * as handlers from './handlers'
 
-  return [ {
-    ...job,
-    when: Date.now() + ms('30s')
-  } ]
+const HANDLERS = {
+  'SYNC_S3_TO_ES': handlers.syncS3ToEs,
+  'CHECK_INFRASTRUCTURE': handlers.checkInfrastructure,
+  'GET_METRIC_DATA': handlers.getMetricData
+}
+
+const handleJob = async (job) => {
+  const handler = HANDLERS[ job.name ]
+
+  if (!handler || typeof handler !== 'function') {
+    return
+  }
+
+  return await handler(job)
 }
 
 const sendJobs = async (jobs) => {
