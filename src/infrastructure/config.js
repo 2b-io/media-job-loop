@@ -3,6 +3,7 @@ export default {
   migrateSever: process.env.MIGRATE_SEVER,
   mongodb: process.env.MONGO,
   cdnServer: process.env.CDN_SERVER,
+  apiServer: process.env.API_SERVER,
   server: {
     base: process.env.BASE_URL,
     bind: process.env.SERVER_BIND,
@@ -24,9 +25,9 @@ export default {
       accessKeyId: process.env.AWS_CLOUDWATCH_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_CLOUDWATCH_SECRET_ACCESS_KEY
     },
-    elasticSearch: {
-      host: process.env.AWS_ELASTIC_SEARCH_HOST,
-      prefix: process.env.AWS_ELASTIC_SEARCH_PREFIX
+    elasticsearch: {
+      host: process.env.AWS_ELASTICSEARCH_HOST,
+      prefix: process.env.AWS_ELASTICSEARCH_PREFIX
     }
   },
   pulling: {

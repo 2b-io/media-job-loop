@@ -36,10 +36,15 @@ const getProject = async (projectId) => {
   })
 }
 
+const getPullSetting = async (projectId) => {
+  return
+}
+
 export default {
   updateStatusProject,
   getProjectByIdentifier,
   getInfrastructureByProject,
   getInfrastructure,
-  getProject
+  getProject,
+  getPullSetting
 }

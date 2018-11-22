@@ -2,7 +2,7 @@ import ms from 'ms'
 
 import cloudWatch from 'services/cloud-watch'
 import da from 'services/da'
-import elasticSearch from 'services/elastic-search'
+import elasticsearch from 'services/elasticsearch'
 import reportMapping from 'server/mapping/report'
 
 const PERIOD = 60
@@ -43,7 +43,7 @@ export default async (job) => {
   })
 
   if (datapoints.length) {
-    await elasticSearch.initMapping(
+    await elasticsearch.initMapping(
       projectIdentifier,
       metricName,
       reportMapping
@@ -56,7 +56,7 @@ export default async (job) => {
         const { timestamp, value } = datapoint
 
         try {
-          return await elasticSearch.createOrUpdate(
+          return await elasticsearch.createOrUpdate(
             projectIdentifier,
             metricName,
             timestamp, {

@@ -7,7 +7,7 @@ const getDistribution = async (distributionIdentifier) => {
 }
 
 
-async invalidate(distributionId, patterns = []) => {
+const createInvalidate = async (distributionId, patterns = []) => {
   const params = {
     DistributionId: distributionId,
     InvalidationBatch: {
@@ -30,5 +30,7 @@ const getInvalidation = async (distributionIdentifier, invalidationIdentifier) =
 }
 
 export default {
-  getDistribution
+  getDistribution,
+  getInvalidation,
+  createInvalidate
 }
