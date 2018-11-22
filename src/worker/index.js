@@ -9,7 +9,9 @@ import * as handlers from './handlers'
 const HANDLERS = {
   'SYNC_S3_TO_ES': handlers.syncS3ToEs,
   'CHECK_INFRASTRUCTURE': handlers.checkInfrastructure,
-  'GET_METRIC_DATA': handlers.getMetricData
+  'GET_METRIC_DATA': handlers.getMetricData,
+  'INVALIDATE_CACHE': handlers.invalidateCache,
+  'CHECK_INVALIDATION': handlers.checkInvalidation
 }
 
 const handleJob = async (job) => {
