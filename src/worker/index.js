@@ -28,6 +28,7 @@ const sendJobs = async (jobs) => {
       (job) => request
         .post(`${ config.apiUrl }/jobs`)
         .set('content-type', 'application/json')
+        .set('authorization', 'MEDIA_CDN app=job-loop')
         .send(job)
     )
   )
