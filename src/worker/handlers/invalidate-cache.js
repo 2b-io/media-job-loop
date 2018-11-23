@@ -1,7 +1,8 @@
 import ms from 'ms'
 import request from 'superagent'
 
-import cache from 'services/cache'
+import config from 'infrastructure/config'
+import { invalidateByPatterns } from 'services/cache'
 import da from 'services/da'
 
 export default async (job) => {
@@ -27,14 +28,14 @@ export default async (job) => {
   const {
     Id: invalidationIdentifier,
     Status: status
-  } = await cache.invalidateByPatterns(projectIdentifier, patterns, options)
+  } = await invalidateByPatterns(projectIdentifier, patterns, options)
 
   if (invalidationIdentifier) {
     await request
-      .put(`${ config.apiServer }/projects/:${ projectIdentifier }/invalidations/:${ invalidationIdentifier }`)
+      .put(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`)
       .set('Content-Type', 'application/json')
       .send({
-        status
+        status: status.toUpperCase()
       })
     return [
       {

@@ -1,3 +1,6 @@
+import request from 'superagent'
+
+import config from 'infrastructure/config'
 import Project from 'server/models/project'
 import infrastructure from 'server/models/infrastructure'
 
@@ -36,8 +39,11 @@ const getProject = async (projectId) => {
   })
 }
 
-const getPullSetting = async (projectId) => {
-  return
+const getPullSetting = async (projectIdentifier) => {
+  return await request
+    .get(`${ config.apiServer }/projects/${ projectIdentifier }/pull-setting`)
+    .set('Content-Type', 'application/json')
+    .set('Authorization', 'MEDIA_CDN app=jobs-loop')
 }
 
 export default {

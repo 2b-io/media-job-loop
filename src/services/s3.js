@@ -1,3 +1,8 @@
+import config from 'infrastructure/config'
+import s3 from 'infrastructure/s3'
+
+const MAX_KEYS = 10
+
 export default {
   async delete(keys) {
     let keyFrom = 0
