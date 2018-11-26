@@ -40,10 +40,12 @@ const getProject = async (projectId) => {
 }
 
 const getPullSetting = async (projectIdentifier) => {
-  return await request
+  const { body } = await request
     .get(`${ config.apiServer }/projects/${ projectIdentifier }/pull-setting`)
     .set('Content-Type', 'application/json')
     .set('Authorization', 'MEDIA_CDN app=jobs-loop')
+
+    return body
 }
 
 export default {

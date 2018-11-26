@@ -1,6 +1,7 @@
 import ms from 'ms'
 import request from 'superagent'
 
+import config from 'infrastructure/config'
 import cloudfront from 'services/cloudfront'
 import da from 'services/da'
 
@@ -10,10 +11,15 @@ export default async (job) => {
     when,
     payload: {
       projectIdentifier,
-      distributionIdentifier,
-      invalidationIdentifier
+      invalidationId,
+      distributionIdentifier
     }
   } = job
+
+  const { body: { cdnInvalidationRef: invalidationIdentifier } } = await request
+      .get(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationId }`)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'MEDIA_CDN app=jobs-loop')
 
   const {
     Status: invalidationStatus
@@ -25,17 +31,19 @@ export default async (job) => {
       when: when + ms('1m'),
       payload: {
         projectIdentifier,
-        distributionIdentifier,
-        invalidationIdentifier
+        invalidationId,
+        distributionIdentifier
       }
     }
   } else {
     await request
-      .put(`${ config.apiServer }/projects/:${ projectIdentifier }/invalidations/:${ invalidationIdentifier }`)
+      .patch(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationId }`)
       .set('Content-Type', 'application/json')
+      .set('Authorization', 'MEDIA_CDN app=jobs-loop')
       .send({
-        status
+        status: invalidationStatus.toUpperCase(),
       })
+
       return null
   }
 }

@@ -28,7 +28,7 @@ const sendJobs = async (jobs) => {
   await Promise.all(
     jobs.map(
       (job) => request
-        .post(`${ config.apiUrl }/jobs`)
+        .post(`${ config.apiServer }/jobs`)
         .set('content-type', 'application/json')
         .set('authorization', 'MEDIA_CDN app=job-loop')
         .send(job)

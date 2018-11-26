@@ -9,7 +9,7 @@ export default async (job) => {
   const {
     payload: {
       projectIdentifier,
-      patterns,
+      invalidationIdentifier: invalidationId,
       options = {
         deleteOnS3: true,
         deleteOnDistribution: true
@@ -28,26 +28,27 @@ export default async (job) => {
   const {
     Id: invalidationIdentifier,
     Status: status
-  } = await invalidateByPatterns(projectIdentifier, patterns, options)
+  } = await invalidateByPatterns(projectIdentifier, invalidationId, options)
 
   if (invalidationIdentifier) {
     await request
-      .put(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`)
+      .patch(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationId }`)
       .set('Content-Type', 'application/json')
+      .set('Authorization', 'MEDIA_CDN app=jobs-loop')
       .send({
-        status: status.toUpperCase()
+        status: status.toUpperCase(),
+        cdnInvalidationRef: invalidationIdentifier
       })
-    return [
-      {
-        name: 'CHECK_INVALIDATION',
-        when: Date.now(),
-        payload: {
-          projectIdentifier,
-          distributionIdentifier,
-          invalidationIdentifier
-        }
+
+    return {
+      name: 'CHECK_INVALIDATION',
+      when: Date.now(),
+      payload: {
+        projectIdentifier,
+        distributionIdentifier,
+        invalidationId
       }
-    ]
+    }
   } else {
     return null
   }
