@@ -1,4 +1,3 @@
-import config from 'infrastructure/config'
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
 
@@ -7,7 +6,8 @@ export default async (job) => {
     name,
     when,
     payload: {
-      projectIdentifier
+      projectIdentifier,
+      isActive
     }
   } = job
 
@@ -17,18 +17,8 @@ export default async (job) => {
   // get infrastructure
   const infrastructure = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
-  const {
-    distribution,
-    domain
-  } = await cloudfront.createDistribution(projectIdentifier, {
-    comment: `${ config.development ? 'DEV:' : '' }${ projectIdentifier }`
-  })
-
-  // update infrastructure
-  await api.call('patch', `/projects/${ projectIdentifier }/infrastructure`, {
-    ref: distribution.Id,
-    domain: distribution.DomainName,
-    cname: domain
+  await cloudfront.updateDistribution(infrastructure.ref, {
+    enabled: isActive
   })
 
   return {
