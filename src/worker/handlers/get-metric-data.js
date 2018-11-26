@@ -1,7 +1,7 @@
 import ms from 'ms'
 
+import api from 'services/api'
 import cloudwatch from 'services/cloudwatch'
-import da from 'services/da'
 import elasticSearch from 'services/elastic-search'
 import reportMapping from 'server/mapping/report'
 
@@ -26,13 +26,13 @@ export default async (job) => {
 
   console.log('GET_DATA_FROM_CLOUD_WATCH ...')
 
-  const { _id: projectId, isActive } = await da.getProjectByIdentifier(projectIdentifier)
+  const { _id: projectId, isActive } = await api.call('get', `/projects/${ projectIdentifier }`)
 
   if (!isActive) {
     return null
   }
 
-  const { identifier: distributionIdentifier } = await da.getInfrastructureByProject(projectId)
+  const { ref: distributionIdentifier } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
   const { datapoints } = await cloudwatch.getMetric({
     distributionIdentifier,

@@ -2,7 +2,7 @@ import ms from 'ms'
 import request from 'superagent'
 
 import config from 'infrastructure/config'
-import da from 'services/da'
+import api from 'services/api'
 
 const PREFIX = config.aws.elasticSearch.prefix
 
@@ -20,9 +20,9 @@ export default async (job) => {
     }
   } = job
 
-  const { isActive } = await da.getProjectByIdentifier(projectIdentifier)
+  const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
-  if (!isActive) {
+  if (!project.isActive) {
     return null
   }
 
