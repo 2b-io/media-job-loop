@@ -2,14 +2,16 @@ import asArray from 'as-array'
 import request from 'superagent'
 
 import config from 'infrastructure/config'
+import api from 'services/api'
 import { createConsumer } from 'services/work-queue/consumer'
 
 import * as handlers from './handlers'
 
 const HANDLERS = {
-  'SYNC_S3_TO_ES': handlers.syncS3ToEs,
   'CHECK_INFRASTRUCTURE': handlers.checkInfrastructure,
-  'GET_METRIC_DATA': handlers.getMetricData
+  'CREATE_INFRASTRUCTURE': handlers.createInfrastructure,
+  'GET_METRIC_DATA': handlers.getMetricData,
+  'SYNC_S3_TO_ES': handlers.syncS3ToEs
 }
 
 const handleJob = async (job) => {
@@ -25,11 +27,7 @@ const handleJob = async (job) => {
 const sendJobs = async (jobs) => {
   await Promise.all(
     jobs.map(
-      (job) => request
-        .post(`${ config.apiUrl }/jobs`)
-        .set('content-type', 'application/json')
-        .set('authorization', 'MEDIA_CDN app=job-loop')
-        .send(job)
+      (job) => api.call('post', '/jobs', job)
     )
   )
 }

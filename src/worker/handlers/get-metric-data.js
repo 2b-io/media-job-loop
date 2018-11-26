@@ -1,6 +1,6 @@
 import ms from 'ms'
 
-import cloudWatch from 'services/cloud-watch'
+import cloudwatch from 'services/cloudwatch'
 import da from 'services/da'
 import elasticSearch from 'services/elastic-search'
 import reportMapping from 'server/mapping/report'
@@ -34,7 +34,7 @@ export default async (job) => {
 
   const { identifier: distributionIdentifier } = await da.getInfrastructureByProject(projectId)
 
-  const { datapoints } = await cloudWatch.getMetric({
+  const { datapoints } = await cloudwatch.getMetric({
     distributionIdentifier,
     name: metricName,
     period: PERIOD,

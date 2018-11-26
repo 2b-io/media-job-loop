@@ -54,15 +54,16 @@ class Consumer extends Connection {
         await channel.ack(msg)
         console.log('MESSAGE ACKNOWLEDGED')
 
-        console.log(`WAIT ${ this.props.shortBreak } THEN CONTINUE...`)
-        await delay(ms(this.props.shortBreak))
-
-        this.consume()
       } catch (e) {
         console.warn(e)
 
         // send to dead-letter exchange
         await channel.reject(msg, false)
+      } finally {
+        console.log(`WAIT ${ this.props.shortBreak } THEN CONTINUE...`)
+        await delay(ms(this.props.shortBreak))
+
+        this.consume()
       }
     } catch (e) {
       console.error(e)

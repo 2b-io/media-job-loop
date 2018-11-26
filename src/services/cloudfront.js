@@ -1,7 +1,7 @@
-import cloudFront from 'infrastructure/cloud-front'
+import cloudfront from 'infrastructure/cloudfront'
 
 const getDistribution = async (distributionIdentifier) => {
-  return await cloudFront.getDistribution({
+  return await cloudfront.getDistribution({
     Id: distributionIdentifier
   }).promise()
 }
