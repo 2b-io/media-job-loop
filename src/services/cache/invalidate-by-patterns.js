@@ -15,15 +15,19 @@ const normalizePattern = (path, pullUrl) => {
   }
 }
 
-const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier, options) => {
+const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier, options = { deleteOnS3: true, deleteOnDistribution: true }) => {
   const { patterns } = await api.call('get', `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`)
+
+  const project = await api.call('get', `/projects/${ projectIdentifier }`)
+
+  if (project.status !== 'DEPLOYED') {
+    options.deleteOnDistribution = false
+  }
 
   if (patterns.indexOf('*') !== -1 || patterns.indexOf('/*') !== -1 ) {
     // delete all files in project
     return await handler.invalidateAll(projectIdentifier, options)
   }
-
-  const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
   const { pullUrl } = await api.call('get', `/projects/${ projectIdentifier }/pull-setting`)
 

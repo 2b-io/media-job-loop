@@ -8,11 +8,7 @@ export default async (job) => {
   const {
     payload: {
       projectIdentifier,
-      invalidationIdentifier: invalidationId,
-      options = {
-        deleteOnS3: true,
-        deleteOnDistribution: true
-      }
+      invalidationIdentifier: invalidationId
     }
   } = job
 
@@ -23,7 +19,7 @@ export default async (job) => {
   const {
     Id: invalidationIdentifier,
     Status: status
-  } = await invalidateByPatterns(projectIdentifier, invalidationId, options)
+  } = await invalidateByPatterns(projectIdentifier, invalidationId)
 
   if (invalidationIdentifier) {
       api.call('patch', `/projects/${ projectIdentifier }/invalidations/${ invalidationId }`, { cdnInvalidationRef: invalidationIdentifier })
