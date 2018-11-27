@@ -1,9 +1,8 @@
 import ms from 'ms'
-import request from 'superagent'
 
 import config from 'infrastructure/config'
+import api from 'services/api'
 import { invalidateByPatterns } from 'services/cache'
-import da from 'services/da'
 
 export default async (job) => {
   const {
@@ -18,12 +17,8 @@ export default async (job) => {
   } = job
 
   const {
-    _id: projectId,
-  } = await da.getProjectByIdentifier(projectIdentifier)
-
-  const {
     identifier: distributionIdentifier
-  } = await da.getInfrastructureByProject(projectId)
+  } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
   const {
     Id: invalidationIdentifier,
@@ -31,13 +26,7 @@ export default async (job) => {
   } = await invalidateByPatterns(projectIdentifier, invalidationId, options)
 
   if (invalidationIdentifier) {
-    await request
-      .patch(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationId }`)
-      .set('Content-Type', 'application/json')
-      .set('Authorization', 'MEDIA_CDN app=jobs-loop')
-      .send({
-        cdnInvalidationRef: invalidationIdentifier
-      })
+      api.call('patch', `/projects/${ projectIdentifier }/invalidations/${ invalidationId }`, { cdnInvalidationRef: invalidationIdentifier })
 
     return {
       name: 'CHECK_INVALIDATION',

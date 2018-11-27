@@ -1,10 +1,10 @@
+import api from 'services/api'
 import cloudfront from 'services/cloudfront'
-import da from 'services/da'
 import handler from './handler'
 import s3 from 'services/s3'
 
 const invalidateByPreset = async (projectIdentifier, presetHash) => {
-  const project = await da.getProjectByIdentifier(projectIdentifier)
+
   const allObjects = await handler.searchByPresetHash(projectIdentifier, presetHash)
 
   // delete on s3
@@ -13,7 +13,7 @@ const invalidateByPreset = async (projectIdentifier, presetHash) => {
   }
 
   // delete on cloudfront
-  const { identifier: distributionId } = await da.getInfrastructureByProjectId(project._id)
+  const { identifier: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
   await cloudfront.createInvalidate(distributionId, [ '/*' ])
 }

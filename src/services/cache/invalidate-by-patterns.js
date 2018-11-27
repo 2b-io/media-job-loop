@@ -1,9 +1,8 @@
-import request from 'superagent'
 import serializeError from 'serialize-error'
 import { URL } from 'url'
 
+import api from 'services/api'
 import cloudfront from 'services/cloudfront'
-import da from 'services/da'
 import handler from './handler'
 import config from 'infrastructure/config'
 import s3 from 'services/s3'
@@ -17,19 +16,16 @@ const normalizePattern = (path, pullUrl) => {
 }
 
 const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier, options) => {
-  const { body: { patterns } } = await request
-    .get(`${ config.apiServer }/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`)
-    .set('Content-Type', 'application/json')
-    .set('Authorization', 'MEDIA_CDN app=jobs-loop')
+  const { patterns } = await api.call('get', `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`)
 
   if (patterns.indexOf('*') !== -1 || patterns.indexOf('/*') !== -1 ) {
     // delete all files in project
     return await handler.invalidateAll(projectIdentifier, options)
   }
 
-  const project = await da.getProjectByIdentifier(projectIdentifier)
+  const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
-  const { pullUrl } = await da.getPullSetting(projectIdentifier)
+  const { pullUrl } = await api.call('get', `/projects/${ projectIdentifier }/pull-setting`)
 
   const normalizedPatterns = patterns
     .map(
@@ -37,7 +33,7 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier, o
     )
     .filter(Boolean)
 
-  const { identifier: distributionId } = await da.getInfrastructureByProject(project._id)
+  const { identifier: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
   if (normalizedPatterns.length) {
     if (options.deleteOnS3) {

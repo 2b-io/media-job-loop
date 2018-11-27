@@ -1,3 +1,4 @@
+import api from 'services/api'
 import elasticsearch from 'services/elasticsearch'
 
 export default {
@@ -66,10 +67,12 @@ export default {
 
     if (options.deleteOnDistribution) {
       // delete on distribution
-      const project = await da.getProjectByIdentifier(projectIdentifier)
-      const { identifier: distributionId } = await da.getInfrastructureByProjectId(project._id)
 
-      await cloudfront.createInvalidate(distributionId, [ '/*' ])
+      const project = await api.call('get', `/projects/${ projectIdentifier }`)
+
+      const infrastructure = await api.call('get', `/projects/${ project.identifier }/infrastructure`)
+
+      await cloudfront.createInvalidate(infrastructure.identifier, [ '/*' ])
     }
   }
 

@@ -2,7 +2,7 @@ import ms from 'ms'
 
 import api from 'services/api'
 import cloudwatch from 'services/cloudwatch'
-import elasticSearch from 'services/elastic-search'
+import elasticsearch from 'services/elasticsearch'
 import reportMapping from 'server/mapping/report'
 
 const PERIOD = 60
