@@ -36,7 +36,6 @@ export default async (job) => {
       .set('Content-Type', 'application/json')
       .set('Authorization', 'MEDIA_CDN app=jobs-loop')
       .send({
-        status: status.toUpperCase(),
         cdnInvalidationRef: invalidationIdentifier
       })
 

@@ -1,6 +1,6 @@
 import ms from 'ms'
 
-import cloudWatch from 'infrastructure/cloud-watch'
+import cloudwatch from 'infrastructure/cloudwatch'
 
 const METRIC_NAME = {
   BYTES_DOWNLOADED: 'BytesDownloaded',
@@ -54,7 +54,7 @@ const formatRequestParams = ({
 
 const getMetric = async (params) => {
   const { startTime, endTime, period } = params
-  const responseData = await cloudWatch.getMetricStatistics(
+  const responseData = await cloudwatch.getMetricStatistics(
     formatRequestParams(params)
   ).promise()
 
