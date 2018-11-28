@@ -10,8 +10,9 @@ const HANDLERS = {
   'CHECK_INFRASTRUCTURE': handlers.checkInfrastructure,
   'CREATE_INFRASTRUCTURE': handlers.createInfrastructure,
   'UPDATE_INFRASTRUCTURE': handlers.updateInfrastructure,
-  'INVALIDATE_CACHE': handlers.invalidateCache,
-  'CHECK_INVALIDATION': handlers.checkInvalidation
+  
+  'CHECK_INVALIDATION': handlers.checkInvalidation,
+  'CREATE_INVALIDATION': handlers.createInvalidation
 
   // 'GET_METRIC_DATA': handlers.getMetricData,
   // 'SYNC_S3_TO_ES': handlers.syncS3ToEs
