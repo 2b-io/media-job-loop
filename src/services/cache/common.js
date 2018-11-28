@@ -1,4 +1,5 @@
 import api from 'services/api'
+import cloudfront from 'services/cloudfront'
 import elasticsearch from 'services/elasticsearch'
 
 export default {
@@ -54,9 +55,9 @@ export default {
     })
   },
   async invalidateAll (projectIdentifier) {
-    const allObjects = await await elasticsearch.searchAllObjects({
+    const allObjects = await await elasticsearch.searchAllObjects(
       projectIdentifier
-    })
+    )
 
     if (allObjects.length) {
       // delete on s3
@@ -67,7 +68,7 @@ export default {
       identifier: distributionIdentifier
     } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
-    await cloudfront.createInvalidate(distributionIdentifier, [ '/*' ])
+    return await cloudfront.createInvalidate(distributionIdentifier, [ '/*' ])
   }
 
 }
