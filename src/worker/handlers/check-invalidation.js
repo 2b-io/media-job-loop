@@ -1,6 +1,5 @@
 import ms from 'ms'
 
-import config from 'infrastructure/config'
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
 
@@ -10,31 +9,42 @@ export default async (job) => {
     when,
     payload: {
       projectIdentifier,
-      invalidationId,
-      distributionIdentifier
+      invalidationIdentifier
     }
   } = job
 
   const {
-    cdnInvalidationRef: invalidationIdentifier
-  } = await api.call('get', `/projects/${ projectIdentifier }/invalidations/${ invalidationId }`)
+    identifier: distributionIdentifier
+  } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
+
+  const {
+    cdnInvalidationRef: invalidationId
+  } = await api.call('get', `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`)
 
   const {
     Status: invalidationStatus
-  } = await cloudfront.getInvalidation(distributionIdentifier, invalidationIdentifier)
+  } = await cloudfront.getInvalidation(distributionIdentifier, invalidationId)
 
-  if (invalidationStatus === 'InProgress') {
-    return {
-      name: 'CHECK_INVALIDATION',
-      when: when + ms('1m'),
-      payload: {
-        projectIdentifier,
-        invalidationId,
-        distributionIdentifier
-      }
+  if (!invalidationStatus) {
+    return null
+  }
+
+  if (invalidationStatus === 'Completed') {
+    await api.call(
+      'patch',
+      `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`,
+      { status: invalidationStatus.toUpperCase() }
+    )
+
+    return null
+  }
+
+  return {
+    name: 'CHECK_INVALIDATION',
+    when: Date.now() + ms('1m'),
+    payload: {
+      projectIdentifier,
+      invalidationIdentifier
     }
-  } else {
-      await api.call('patch', `/projects/${ projectIdentifier }/invalidations/${ invalidationId }`, { status: invalidationStatus.toUpperCase() })
-      return null
   }
 }

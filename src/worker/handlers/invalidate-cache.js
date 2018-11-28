@@ -1,6 +1,5 @@
 import ms from 'ms'
 
-import config from 'infrastructure/config'
 import api from 'services/api'
 import { invalidateByPatterns } from 'services/cache'
 
@@ -8,32 +7,31 @@ export default async (job) => {
   const {
     payload: {
       projectIdentifier,
-      invalidationIdentifier: invalidationId
+      invalidationIdentifier
     }
   } = job
 
   const {
-    identifier: distributionIdentifier
-  } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
-
-  const {
-    Id: invalidationIdentifier,
+    Id: invalidationId,
     Status: status
-  } = await invalidateByPatterns(projectIdentifier, invalidationId)
+  } = await invalidateByPatterns(projectIdentifier, invalidationIdentifier)
 
-  if (invalidationIdentifier) {
-      api.call('patch', `/projects/${ projectIdentifier }/invalidations/${ invalidationId }`, { cdnInvalidationRef: invalidationIdentifier })
-
-    return {
-      name: 'CHECK_INVALIDATION',
-      when: Date.now(),
-      payload: {
-        projectIdentifier,
-        distributionIdentifier,
-        invalidationId
-      }
-    }
-  } else {
+  if (!invalidationId) {
     return null
+  }
+
+   await api.call(
+     'patch',
+     `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`,
+     { cdnInvalidationRef: invalidationId }
+   )
+
+  return {
+    name: 'CHECK_INVALIDATION',
+    when: Date.now(),
+    payload: {
+      projectIdentifier,
+      invalidationIdentifier
+    }
   }
 }

@@ -53,27 +53,21 @@ export default {
       }
     })
   },
-  async invalidateAll (projectIdentifier, options) {
-    if (options.deleteOnS3) {
-      const allObjects = await await elasticsearch.searchAllObjects({
-        projectIdentifier
-      })
+  async invalidateAll (projectIdentifier) {
+    const allObjects = await await elasticsearch.searchAllObjects({
+      projectIdentifier
+    })
 
-      if (allObjects.length) {
-        // delete on s3
-        await s3.delete(allObjects)
-      }
+    if (allObjects.length) {
+      // delete on s3
+      await s3.delete(allObjects)
     }
 
-    if (options.deleteOnDistribution) {
-      // delete on distribution
+    const {
+      identifier: distributionIdentifier
+    } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
-      const project = await api.call('get', `/projects/${ projectIdentifier }`)
-
-      const infrastructure = await api.call('get', `/projects/${ project.identifier }/infrastructure`)
-
-      await cloudfront.createInvalidate(infrastructure.identifier, [ '/*' ])
-    }
+    await cloudfront.createInvalidate(distributionIdentifier, [ '/*' ])
   }
 
 }

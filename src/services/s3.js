@@ -1,7 +1,7 @@
 import config from 'infrastructure/config'
 import s3 from 'infrastructure/s3'
 
-const MAX_KEYS = 10
+const MAX_KEYS = 1000
 
 export default {
   async delete(keys) {
