@@ -4,7 +4,7 @@ import request from 'superagent'
 import config from 'infrastructure/config'
 import api from 'services/api'
 
-const PREFIX = config.aws.elasticSearch.prefix
+const PREFIX = config.aws.elasticsearch.prefix
 
 export default async (job) => {
   console.log('SYNC_S3_TO_ES...')

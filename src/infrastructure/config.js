@@ -24,15 +24,21 @@ export default {
       accessKeyId: process.env.AWS_CLOUDWATCH_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_CLOUDWATCH_SECRET_ACCESS_KEY
     },
-    elasticSearch: {
-      host: process.env.AWS_ELASTIC_SEARCH_HOST,
-      prefix: process.env.AWS_ELASTIC_SEARCH_PREFIX
+    elasticsearch: {
+      host: process.env.AWS_ELASTICSEARCH_HOST,
+      prefix: process.env.AWS_ELASTICSEARCH_PREFIX
     },
     route53: {
       region: process.env.AWS_ROUTE53_REGION,
       accessKeyId: process.env.AWS_ROUTE53_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_ROUTE53_SECRET_ACCESS_KEY,
       hostedZoneId: process.env.AWS_ROUTE53_HOSTED_ZONE_ID
+    },
+    s3: {
+      bucket: process.env.AWS_S3_BUCKET,
+      region: process.env.AWS_S3_REGION,
+      accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
     }
   },
   pulling: {

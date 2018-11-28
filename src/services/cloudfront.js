@@ -4,6 +4,28 @@ import cloudfront from 'infrastructure/cloudfront'
 import config from 'infrastructure/config'
 import route53 from 'services/route-53'
 
+const createInvalidate = async (distributionId, patterns = []) => {
+  const params = {
+    DistributionId: distributionId,
+    InvalidationBatch: {
+      CallerReference: Date.now().toString(),
+      Paths: {
+        Quantity: patterns.length,
+        Items: patterns
+      }
+    }
+  }
+
+  return await cloudfront.createInvalidation(params).promise()
+}
+
+const getInvalidation = async (distributionIdentifier, invalidationIdentifier) => {
+  return await cloudfront.getInvalidation({
+    DistributionId: distributionIdentifier,
+    Id: invalidationIdentifier
+  }).promise()
+}
+
 const s = (text) => ms(text) / 1000
 
 const createDistributionConfig = ({
@@ -262,5 +284,7 @@ const updateDistribution = async (distributionId, data) => {
 export default {
   createDistribution,
   getDistribution,
-  updateDistribution
+  updateDistribution,
+  getInvalidation,
+  createInvalidate
 }
