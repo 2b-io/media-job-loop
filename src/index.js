@@ -12,7 +12,8 @@ const HANDLERS = {
   'UPDATE_INFRASTRUCTURE': handlers.updateInfrastructure,
 
   'CHECK_INVALIDATION': handlers.checkInvalidation,
-  'CREATE_INVALIDATION': handlers.createInvalidation,
+  'CREATE_INVALIDATION_BY_PATTERNS': handlers.createInvalidationByPatterns,
+  'CREATE_INVALIDATION_BY_PROJECT': handlers.createInvalidationByProject,
 
   'SEND_EMAIL': handlers.sendEmail
 
