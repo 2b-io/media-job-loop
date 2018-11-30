@@ -3,7 +3,13 @@ import path from 'path'
 
 import smtp from 'infrastructure/smtp'
 
-const template = (name) => path.join(__dirname, 'templates', name)
+import * as handlers from './handlers'
+
+const HANDLERS = {
+  'INVITATION': handlers.invitation,
+  'PASSWORD_RECOVERY': handlers.passwordRecovery,
+  'WELCOME': handlers.welcome
+}
 
 const emailService = new Email({
   ...smtp,
@@ -14,18 +20,24 @@ const emailService = new Email({
   }
 })
 
+const getTemplateDir = (name) => path.join(__dirname, 'templates', name)
+
 export default async (job) => {
+  const handler = HANDLERS[job.payload.type]
+
+  if (!handler || typeof handler !== 'function') {
+    return
+  }
+
+  const { template, receivers, locals } = await handler(job)
+
   const result = await emailService.send({
-    template: template('welcome'),
+    template: getTemplateDir(template),
     message: {
-      to: 'd@dapps.me'
+      to: receivers
     },
-    locals: {
-      name: 'Peter Smith'
-    }
+    locals
   })
 
   console.log(result)
-
-  return null
 }
