@@ -4,15 +4,15 @@ import config from 'infrastructure/config'
 import { createConsumer } from 'services/work-queue/consumer'
 import { createProducer } from 'services/work-queue/producer'
 
-import * as handlers from './handlers'
+import * as jobs from './jobs'
 
 const HANDLERS = {
-  'CHECK_INFRASTRUCTURE': handlers.checkInfrastructure,
-  'CREATE_INFRASTRUCTURE': handlers.createInfrastructure,
-  'UPDATE_INFRASTRUCTURE': handlers.updateInfrastructure,
-  
-  'CHECK_INVALIDATION': handlers.checkInvalidation,
-  'CREATE_INVALIDATION': handlers.createInvalidation
+  'CHECK_INFRASTRUCTURE': jobs.checkInfrastructure,
+  'CREATE_INFRASTRUCTURE': jobs.createInfrastructure,
+  'UPDATE_INFRASTRUCTURE': jobs.updateInfrastructure,
+
+  'CHECK_INVALIDATION': jobs.checkInvalidation,
+  'CREATE_INVALIDATION': jobs.createInvalidation
 
   // 'GET_METRIC_DATA': handlers.getMetricData,
   // 'SYNC_S3_TO_ES': handlers.syncS3ToEs

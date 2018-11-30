@@ -10,6 +10,8 @@ class Consumer extends Connection {
       longBreak: '5s',
       ...props
     })
+
+    this.idle = false
   }
 
   onReceive(cb) {
@@ -28,14 +30,16 @@ class Consumer extends Connection {
     try {
       const { channel, queue } = this.state
 
-      console.log('GETTING MESSAGE FROM WORK QUEUE...')
-
       const msg = await channel.get(queue, {
         noAck: false
       })
 
       if (!msg) {
-        console.log(`NO MESSAGE, REST FOR ${ this.props.longBreak }...`)
+        if (!this.idle) {
+          console.log(`NO MORE MESSAGE, RECHECK EVERY ${ this.props.longBreak }...`)
+
+          this.idle = true
+        }
 
         await delay(ms(this.props.longBreak))
 
@@ -47,6 +51,7 @@ class Consumer extends Connection {
       try {
         console.log('HANDLE MESSAGE...')
 
+        this.idle = false
         const job = JSON.parse(msg.content.toString())
 
         await this.state.cb(job)
