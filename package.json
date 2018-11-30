@@ -11,7 +11,9 @@
     "as-array": "2.0.0",
     "aws-sdk": "2.358.0",
     "delay": "4.1.0",
+    "ect": "0.5.9",
     "elasticsearch": "15.2.0",
+    "email-templates": "5.0.2",
     "express": "4.16.4",
     "morgan": "1.9.1",
     "ms": "2.1.1",
@@ -29,6 +31,6 @@
     "run.env": "1.1.0"
   },
   "scripts": {
-    "start": "run.env nodemon --exec babel-node --watch ./src ./src"
+    "start": "run.env nodemon --watch ./src --exec babel-node ./src"
   }
 }
