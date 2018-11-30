@@ -1,4 +1,5 @@
 export default {
+  isDevMode: process.env.NODE_ENV === 'development',
   apiUrl: process.env.API_URL,
   amq: {
     host: process.env.AMQ_HOST,
@@ -34,6 +35,10 @@ export default {
       accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
     }
+  },
+  sendgrid: {
+    sender: process.env.SENDGRID_SENDER,
+    apiKey: process.env.SENDGRID_API_KEY
   },
   pulling: {
     shortBreak: process.env.PULLING_SHORT_BREAK,
