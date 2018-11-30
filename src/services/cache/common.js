@@ -65,10 +65,12 @@ export default {
     }
 
     const {
-      identifier: distributionIdentifier
+      identifier: distributionId
     } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
-    return await cloudfront.createInvalidate(distributionIdentifier, [ '/*' ])
+    await cloudfront.createInvalidate(distributionId, [ '/*' ])
+
+    return await cloudfront.updateDistribution(distributionId, { enabled: false })
   }
 
 }
