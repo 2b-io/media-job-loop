@@ -55,9 +55,7 @@ export default {
     })
   },
   async invalidateAll (projectIdentifier) {
-    const allObjects = await await elasticsearch.searchAllObjects(
-      projectIdentifier
-    )
+    const allObjects = await api.call('get', `/projects/${ projectIdentifier }/files`)
 
     if (allObjects.length) {
       // delete on s3

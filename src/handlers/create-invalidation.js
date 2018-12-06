@@ -42,7 +42,8 @@ export default async (job) => {
     payload: {
       invalidationType,
       projectIdentifier,
-      invalidationIdentifier
+      invalidationIdentifier,
+      presetHash
     }
   } = job
 
@@ -51,7 +52,7 @@ export default async (job) => {
   }
 
   if (type === 'PRESET') {
-    return await invalidationPreset()
+    return await invalidationPreset(projectIdentifier, presetHash)
   }
 
   if (type === 'PATTERNS') {
