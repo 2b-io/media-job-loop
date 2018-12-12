@@ -9,8 +9,7 @@ import {
 
 const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) => {
   const {
-    Id: invalidationId,
-    Status: status
+    Id: invalidationId
   } = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
 
   if (!invalidationId) {
@@ -37,6 +36,10 @@ const invalidationProject = async (projectIdentifier) => {
   return await invalidationProjectService(projectIdentifier)
 }
 
+const invalidationPreset = async (projectIdentifier, presetHash) => {
+  return await invalidationPresetService(projectIdentifier, presetHash)
+}
+
 export default async (job) => {
   const {
     payload: {
@@ -46,7 +49,7 @@ export default async (job) => {
     }
   } = job
 
-  if (!invalidationType) {
+  if (projectIdentifier) {
     return null
   }
 
