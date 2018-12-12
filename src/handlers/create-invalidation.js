@@ -40,7 +40,6 @@ const invalidationProject = async (projectIdentifier) => {
 export default async (job) => {
   const {
     payload: {
-      invalidationType,
       projectIdentifier,
       invalidationIdentifier,
       presetHash
@@ -51,11 +50,11 @@ export default async (job) => {
     return null
   }
 
-  if (type === 'PRESET') {
+  if (presetHash) {
     return await invalidationPreset(projectIdentifier, presetHash)
   }
 
-  if (type === 'PATTERNS') {
+  if (invalidationIdentifier) {
     return await invalidationPatterns(projectIdentifier, invalidationIdentifier)
   }
 
