@@ -1,6 +1,8 @@
 export default {
   isDevMode: process.env.NODE_ENV === 'development',
   apiUrl: process.env.API_URL,
+  serverBind: process.env.SERVER_BIND,
+  serverPort: process.env.SERVER_PORT,
   amq: {
     host: process.env.AMQ_HOST,
     queue: process.env.AMQ_QUEUE,
