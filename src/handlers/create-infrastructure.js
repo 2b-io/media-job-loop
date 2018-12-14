@@ -14,9 +14,6 @@ export default async (job) => {
   // get project
   const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
-  if (!project || project.isDeleted) {
-    return null
-  }
   // get infrastructure
   const infrastructure = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
