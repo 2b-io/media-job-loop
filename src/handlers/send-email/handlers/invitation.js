@@ -3,9 +3,7 @@ import api from 'services/api'
 
 export default async (job) => {
   const { accountIdentifier, inviterName, message } = job.payload
-
   const account = await api.call('get', `/accounts/${ accountIdentifier }`)
-
   const resetToken = await api.call('post', '/reset-tokens', { email: account.email } )
 
   return {
