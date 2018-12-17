@@ -72,5 +72,4 @@ export default {
 
     return await cloudfront.updateDistribution(distributionId, { enabled: false })
   }
-
 }

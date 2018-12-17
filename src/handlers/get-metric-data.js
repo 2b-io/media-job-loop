@@ -26,9 +26,9 @@ export default async (job) => {
 
   console.log('GET_DATA_FROM_CLOUD_WATCH ...')
 
-  const { _id: projectId, isActive } = await api.call('get', `/projects/${ projectIdentifier }`)
+  const { _id: projectId, isActive, isDeleted } = await api.call('get', `/projects/${ projectIdentifier }`)
 
-  if (!isActive) {
+  if (!isActive || isDeleted) {
     return null
   }
 
