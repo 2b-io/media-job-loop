@@ -2,14 +2,14 @@ import config from 'infrastructure/config'
 import api from 'services/api'
 
 export default async (job) => {
-  const { receivers, activateLink, inviterName, message } = job.payload
+  const { email, activateLink, inviterName, message } = job.payload
 
   return {
     template: 'invitation',
     to: config.sendgrid.sender,
-    receivers,
+    receivers: email,
     locals: {
-      email: account.email,
+      email,
       inviterName,
       message,
       activateLink
