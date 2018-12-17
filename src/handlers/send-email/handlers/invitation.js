@@ -3,7 +3,6 @@ import api from 'services/api'
 
 export default async (job) => {
   const { receivers, activateLink, inviterName, message } = job.payload
-  const account = await api.call('get', `/accounts/${ accountIdentifier }`)
 
   return {
     template: 'invitation',
