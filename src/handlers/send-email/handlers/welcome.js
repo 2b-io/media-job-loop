@@ -2,9 +2,8 @@ import config from 'infrastructure/config'
 import api from 'services/api'
 
 export default async (job) => {
-  const { accountIdentifier } = job.payload
+  const { accountIdentifier, token } = job.payload
   const account = await api.call('get', `/accounts/${ accountIdentifier }`)
-  const resetToken = await api.call('post', '/reset-tokens', { email: account.email } )
 
   return {
     template: 'welcome',
@@ -12,7 +11,7 @@ export default async (job) => {
     receivers: email,
     locals: {
       email,
-      activateLink: `${ config.serverBind }:${ config.serverPort }/reset-password/${ resetToken.token }`
+      activateLink: `${ config.serverBind }:${ config.serverPort }/reset-password/${ token }`
     }
   }
 }
