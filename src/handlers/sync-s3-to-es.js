@@ -20,7 +20,7 @@ export default async (job) => {
 
   const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
-  if (!project.isActive) {
+  if (!project.isActive || project.isDeleted) {
     return null
   }
 
