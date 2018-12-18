@@ -2,8 +2,6 @@ import ms from 'ms'
 
 import api from 'services/api'
 import cloudwatch from 'services/cloudwatch'
-import elasticsearch from 'services/elasticsearch'
-import reportMapping from 'server/mapping/report'
 
 const PERIOD = 60
 const MAX_DATAPOINT = 1440
@@ -26,7 +24,7 @@ export default async (job) => {
 
   console.log('GET_DATA_FROM_CLOUD_WATCH ...')
 
-  const { _id: projectId, isActive, isDeleted } = await api.call('get', `/projects/${ projectIdentifier }`)
+  const { isActive, isDeleted } = await api.call('get', `/projects/${ projectIdentifier }`)
 
   if (!isActive || isDeleted) {
     return null
@@ -43,33 +41,7 @@ export default async (job) => {
   })
 
   if (datapoints.length) {
-    await elasticsearch.initMapping(
-      projectIdentifier,
-      metricName,
-      reportMapping
-    )
-
-    await datapoints.reduce(
-      async (previousJob, datapoint) => {
-        await previousJob
-
-        const { timestamp, value } = datapoint
-
-        try {
-          return await elasticsearch.createOrUpdate(
-            projectIdentifier,
-            metricName,
-            timestamp, {
-              timestamp: new Date(timestamp),
-              value
-            }
-          )
-        } catch (error) {
-          console.error(error)
-        }
-      },
-      Promise.resolve()
-    )
+    return await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, datapoints)
   }
   console.log('UPDATE_METRIC_DATA_SUCCESS')
 
