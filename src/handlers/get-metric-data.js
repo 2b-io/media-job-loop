@@ -41,7 +41,7 @@ export default async (job) => {
   })
 
   if (datapoints.length) {
-    return await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, datapoints)
+    await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, datapoints)
   }
   console.log('UPDATE_METRIC_DATA_SUCCESS')
 
