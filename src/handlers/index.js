@@ -7,5 +7,5 @@ export { default as createInvalidation } from './create-invalidation'
 
 export { default as sendEmail } from './send-email'
 
-// export { default as getMetricData } from './get-metric-data'
+export { default as getMetricData } from './get-metric-data'
 // export { default as syncS3ToEs } from './sync-s3-to-es'

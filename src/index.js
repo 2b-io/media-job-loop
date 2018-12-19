@@ -14,9 +14,9 @@ const HANDLERS = {
   'CHECK_INVALIDATION': handlers.checkInvalidation,
   'CREATE_INVALIDATION': handlers.createInvalidation,
 
-  'SEND_EMAIL': handlers.sendEmail
+  'SEND_EMAIL': handlers.sendEmail,
 
-  // 'GET_METRIC_DATA': handlers.getMetricData,
+  'GET_METRIC_DATA': handlers.getMetricData,
   // 'SYNC_S3_TO_ES': handlers.syncS3ToEs
 
 }
