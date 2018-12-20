@@ -36,8 +36,12 @@ const invalidationProject = async (projectIdentifier) => {
   return await invalidationProjectService(projectIdentifier)
 }
 
-const invalidationPreset = async (projectIdentifier, presetHash) => {
-  return await invalidationPresetService(projectIdentifier, presetHash)
+const invalidationPresetHash = async (projectIdentifier, presetHash) => {
+  return await invalidationPresetService.invalidatePresetHash(projectIdentifier, presetHash)
+}
+
+const invalidationContentType = async (projectIdentifier, contentType) => {
+  return await invalidationPresetService.invalidateContentType(projectIdentifier, contentType)
 }
 
 export default async (job) => {
@@ -45,7 +49,8 @@ export default async (job) => {
     payload: {
       projectIdentifier,
       invalidationIdentifier,
-      presetHash
+      presetHash,
+      contentType
     }
   } = job
 
@@ -54,7 +59,11 @@ export default async (job) => {
   }
 
   if (presetHash) {
-    return await invalidationPreset(projectIdentifier, presetHash)
+    return await invalidationPresetHash(projectIdentifier, presetHash)
+  }
+
+  if (contentType) {
+    return await invalidationContentType(projectIdentifier, contentType)
   }
 
   if (invalidationIdentifier) {
