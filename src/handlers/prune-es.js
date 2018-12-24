@@ -21,7 +21,7 @@ export default async (job) => {
     { lastSynchronized: new Date(lastSynchronized).toISOString(), maxKeys }
   )
 
-  if (!isTruncated) {
+  if (isTruncated) {
     return {
       name,
       when: Date.now(),
