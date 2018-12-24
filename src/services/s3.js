@@ -3,8 +3,6 @@ import s3 from 'infrastructure/s3'
 
 const MAX_KEYS = 1000
 
-
-
 export default {
   async delete (keys) {
     let keyFrom = 0
