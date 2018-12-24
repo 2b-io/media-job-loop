@@ -38,14 +38,34 @@ const fetchPage = async (
         if (!expires || expires < Date.now()) {
           console.log(`${ key } IS EXPIRED...`)
 
-          return {
-            expiredS3Objects: [ ...expiredS3Objects, key ]
-          }
+          return { expiredS3Objects: [ ...expiredS3Objects, key ] }
         }
 
         const objectElasticsearch = formatObjects3toES(s3Object, key, lastSynchronized)
 
-        return await api.call('post', `/projects/${ projectIdentifier }/files`, objectElasticsearch)
+        const checkExistsObject = api.call(
+          'head',
+          `/projects/${ projectIdentifier }/files`,
+          ${ encodeURIComponent(objectElasticsearch.key) }
+        )
+
+        const {
+          originUrl,
+          expires,
+          isOrigin,
+          lastModified,
+          lastSynchronized
+        } = objectElasticsearch
+
+        if (checkExistsObject) {
+          return await api.call(
+            'put',
+            `/projects/${ projectIdentifier }/files`,
+            { originUrl, expires, isOrigin, lastModified, lastSynchronized }
+          )
+        }
+
+        return await api.call('post', `/projects/${ projectIdentifier }/files`, { ...objectElasticsearch })
       } catch (error) {
         console.error(error)
       }
