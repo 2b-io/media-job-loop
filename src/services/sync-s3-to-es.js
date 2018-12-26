@@ -45,13 +45,11 @@ const fetchPage = async (
 
         const checkExistsObject = api.call(
           'head',
-          `/projects/${ projectIdentifier }/files`,
-          ${ encodeURIComponent(objectElasticsearch.key) }
+          `/projects/${ projectIdentifier }/files/${ encodeURIComponent(objectElasticsearch.key) }`
         )
 
         const {
           originUrl,
-          expires,
           isOrigin,
           lastModified,
           lastSynchronized
