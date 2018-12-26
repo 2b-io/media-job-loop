@@ -10,4 +10,4 @@ export { default as sendEmail } from './send-email'
 export { default as getMetricData } from './get-metric-data'
 
 export { default as pruneEs } from './prune-es'
-// export { default as syncS3ToEs } from './sync-s3-to-es'
+export { default as syncS3ToEs } from './sync-s3-to-es'
