@@ -18,7 +18,7 @@ const HANDLERS = {
 
   'GET_METRIC_DATA': handlers.getMetricData,
 
-  'PRUNE_ES': handlers.pruneEs
+  'PRUNE_ES': handlers.pruneEs,
   'SYNC_S3_TO_ES': handlers.syncS3ToEs
 
 }
