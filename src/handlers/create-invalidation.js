@@ -54,7 +54,7 @@ export default async (job) => {
     }
   } = job
 
-  if (projectIdentifier) {
+  if (!projectIdentifier) {
     return null
   }
 

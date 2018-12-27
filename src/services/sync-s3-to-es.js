@@ -15,11 +15,12 @@ const fetchPage = async (
     MaxKeys: maxKeys,
     ContinuationToken: continuationToken || null
   }
+
   const {
     Contents: contents,
     NextContinuationToken: nextContinuationToken,
     IsTruncated: isTruncated
-  } = await media.list({ params })
+  } = await s3.list({ params })
 
   const { expiredS3Objects } = await contents.reduce(
     async (previousJob, file) => {
@@ -30,7 +31,7 @@ const fetchPage = async (
         const projectIdentifier = key.split('/')[1]
         console.log('PUSH_FILE -> ', key)
 
-        const s3Object = await retry(10)(media.head)(key)
+        const s3Object = await retry(10)(s3.head)(key)
 
         // check expire
         const { Expires: expires } = s3Object
@@ -43,17 +44,12 @@ const fetchPage = async (
 
         const objectElasticsearch = formatObjects3toES(s3Object, key, lastSynchronized)
 
-        const checkExistsObject = api.call(
+        const checkExistsObject = await api.call(
           'head',
           `/projects/${ projectIdentifier }/files/${ encodeURIComponent(objectElasticsearch.key) }`
         )
 
-        const {
-          originUrl,
-          isOrigin,
-          lastModified,
-          lastSynchronized
-        } = objectElasticsearch
+        const { originUrl, isOrigin, lastModified, lastSynchronized } = objectElasticsearch
 
         if (checkExistsObject) {
           return await api.call(
@@ -101,7 +97,7 @@ export default async (projectIdentifier, continuationToken, lastSynchronized, ma
     } = await fetchPage(
       continuationToken,
       lastSynchronized,
-      fileVersion,
+      fileS3Version,
       maxKeys
     )
 

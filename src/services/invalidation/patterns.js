@@ -34,9 +34,7 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
     )
     .filter(Boolean)
 
-  const {
-    identifier: distributionId
-  } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
+  const { ref: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
   if (normalizedPatterns.length) {
     const allObjects = await common.searchByPatterns(projectIdentifier, normalizedPatterns)
