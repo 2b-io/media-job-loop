@@ -27,7 +27,6 @@ export default async (job) => {
 
   const {
     nextContinuationToken,
-    message,
     isTruncated
   } = await syncS3ToEsService(projectIdentifier, continuationToken, lastSynchronized, maxKeys)
 
