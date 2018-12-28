@@ -14,7 +14,7 @@ export default async (job) => {
     payload: {
       projectIdentifier,
       continuationToken,
-      lastSynchronized = Date.now(),
+      lastSynchronized = new Date().toISOString(),
       maxKeys
     }
   } = job

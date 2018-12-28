@@ -51,7 +51,7 @@ const fetchPage = async (
           )
 
           const { originUrl, isOrigin, lastModified, lastSynchronized } = objectElasticsearch
-
+          console.log('originUrl, isOrigin, lastModified, lastSynchronized', originUrl, isOrigin, lastModified, lastSynchronized);
           return await api.call(
             'put',
             `/projects/${ projectIdentifier }/files`,
