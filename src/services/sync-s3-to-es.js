@@ -47,14 +47,14 @@ const fetchPage = async (
         try {
           await api.call(
             'head',
-            `/projects/${ projectIdentifier }/files/${ encodeURIComponent(objectElasticsearch.key) }`
+            `/projects/${ projectIdentifier }/files/${ encodeURIComponent(key) }`
           )
 
-          const { originUrl, isOrigin, lastModified, lastSynchronized } = objectElasticsearch
-          console.log('originUrl, isOrigin, lastModified, lastSynchronized', originUrl, isOrigin, lastModified, lastSynchronized);
+          const { originUrl, isOrigin, expires, lastModified, lastSynchronized } = objectElasticsearch
+
           return await api.call(
             'put',
-            `/projects/${ projectIdentifier }/files`,
+            `/projects/${ projectIdentifier }/files/${ encodeURIComponent(key) }`,
             { originUrl, expires, isOrigin, lastModified, lastSynchronized }
           )
         } catch (e) {
