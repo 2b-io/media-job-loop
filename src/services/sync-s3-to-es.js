@@ -44,22 +44,23 @@ const fetchPage = async (
 
         const objectElasticsearch = formatObjects3toES(s3Object, key, lastSynchronized)
 
-        const checkExistsObject = await api.call(
-          'head',
-          `/projects/${ projectIdentifier }/files/${ encodeURIComponent(objectElasticsearch.key) }`
-        )
+        try {
+          await api.call(
+            'head',
+            `/projects/${ projectIdentifier }/files/${ encodeURIComponent(key) }`
+          )
 
-        const { originUrl, isOrigin, lastModified, lastSynchronized } = objectElasticsearch
+          const { originUrl, isOrigin, expires, lastModified, lastSynchronized } = objectElasticsearch
 
-        if (checkExistsObject) {
           return await api.call(
             'put',
-            `/projects/${ projectIdentifier }/files`,
+            `/projects/${ projectIdentifier }/files/${ encodeURIComponent(key) }`,
             { originUrl, expires, isOrigin, lastModified, lastSynchronized }
           )
+        } catch (e) {
+          console.log('FILE NOT FOUND')
+          return await api.call('post', `/projects/${ projectIdentifier }/files`, { ...objectElasticsearch })
         }
-
-        return await api.call('post', `/projects/${ projectIdentifier }/files`, { ...objectElasticsearch })
       } catch (error) {
         console.error(error)
       }
@@ -73,14 +74,13 @@ const fetchPage = async (
     })
   )
 
-  if (expiredS3Objects.length) {
+  if (expiredS3Objects) {
     const deleteResult = await s3.delete(expiredS3Objects)
 
     console.log(deleteResult)
   }
 
   return {
-    expired: expiredS3Objects.length,
     isTruncated,
     nextContinuationToken
   }
@@ -91,7 +91,6 @@ export default async (projectIdentifier, continuationToken, lastSynchronized, ma
     const fileS3Version = `${ config.aws.s3.version }/${ projectIdentifier }`
 
     const {
-      expired,
       isTruncated,
       nextContinuationToken
     } = await fetchPage(
@@ -102,7 +101,6 @@ export default async (projectIdentifier, continuationToken, lastSynchronized, ma
     )
 
     return {
-      expired,
       isTruncated,
       nextContinuationToken
     }

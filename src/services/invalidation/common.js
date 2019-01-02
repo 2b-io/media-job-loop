@@ -32,9 +32,7 @@ export default {
       await s3.delete(allObjects)
     }
 
-    const {
-      identifier: distributionId
-    } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
+    const { ref: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
     await cloudfront.createInvalidate(distributionId, [ '/*' ])
 

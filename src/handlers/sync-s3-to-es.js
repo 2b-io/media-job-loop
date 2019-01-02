@@ -14,7 +14,7 @@ export default async (job) => {
     payload: {
       projectIdentifier,
       continuationToken,
-      lastSynchronized = Date.now(),
+      lastSynchronized = new Date().toISOString(),
       maxKeys
     }
   } = job
@@ -27,7 +27,6 @@ export default async (job) => {
 
   const {
     nextContinuationToken,
-    message,
     isTruncated
   } = await syncS3ToEsService(projectIdentifier, continuationToken, lastSynchronized, maxKeys)
 
