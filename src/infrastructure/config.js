@@ -30,7 +30,8 @@ export default {
       bucket: process.env.AWS_S3_BUCKET,
       region: process.env.AWS_S3_REGION,
       accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+      secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+      version: process.env.AWS_S3_VERSION
     }
   },
   sendgrid: {

@@ -3,6 +3,7 @@ import request from 'superagent'
 
 import config from 'infrastructure/config'
 import api from 'services/api'
+import syncS3ToEsService from 'services/sync-s3-to-es'
 
 export default async (job) => {
   console.log('SYNC_S3_TO_ES...')
@@ -13,7 +14,7 @@ export default async (job) => {
     payload: {
       projectIdentifier,
       continuationToken,
-      lastSynchronized = Date.now(),
+      lastSynchronized = new Date().toISOString(),
       maxKeys
     }
   } = job
@@ -25,21 +26,9 @@ export default async (job) => {
   }
 
   const {
-    body: {
-      nextContinuationToken,
-      message,
-      isTruncated
-    }
-  } = await request
-    .post(`${ config.migrateSever }/migration`)
-    .set('Content-Type', 'application/json')
-    .send({
-      projectIdentifier,
-      continuationToken: continuationToken || null,
-      maxKeys
-    })
-
-  console.log('SYNC_S3_TO_ES... DONE!')
+    nextContinuationToken,
+    isTruncated
+  } = await syncS3ToEsService(projectIdentifier, continuationToken, lastSynchronized, maxKeys)
 
   if (isTruncated) {
     return {
@@ -52,15 +41,17 @@ export default async (job) => {
         lastSynchronized
       }
     }
-  } else {
-    return {
-      name: 'PRUNE_ES',
-      when: Date.now(),
-      payload: {
-        maxKeys,
-        projectIdentifier,
-        lastSynchronized
-      }
+  }
+
+  console.log('SYNC_S3_TO_ES... DONE!')
+
+  return {
+    name: 'PRUNE_ES',
+    when: Date.now(),
+    payload: {
+      maxKeys,
+      projectIdentifier,
+      lastSynchronized
     }
   }
 }

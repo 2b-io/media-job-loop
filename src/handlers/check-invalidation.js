@@ -14,7 +14,7 @@ export default async (job) => {
   } = job
 
   const {
-    identifier: distributionIdentifier
+    ref: distributionRef
   } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
   const {
@@ -23,7 +23,7 @@ export default async (job) => {
 
   const {
     Status: invalidationStatus
-  } = await cloudfront.getInvalidation(distributionIdentifier, invalidationId)
+  } = await cloudfront.getInvalidation(distributionRef, invalidationId)
 
   if (!invalidationStatus) {
     return null
