@@ -1,5 +1,6 @@
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
+import s3 from 'services/s3'
 
 export default {
   async searchByPatterns(projectIdentifier, patterns) {
