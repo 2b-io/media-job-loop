@@ -7,7 +7,11 @@ import common from './common'
 
 const normalizePattern = (path, pullUrl) => {
   try {
-    return new URL(path, pullUrl || undefined).toString()
+    if (path.startsWith('/')) {
+      return new URL(path, pullUrl || undefined).toString()
+    }
+
+    return new URL(`/${ path }`, pullUrl || undefined).toString()
   } catch (e) {
     return null
   }
@@ -21,6 +25,7 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
 
   const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
+  //check invalidation all
   if (patterns.indexOf('*') !== -1 || patterns.indexOf('/*') !== -1 ) {
     // delete all files in project
     return await common.invalidateAll(projectIdentifier)
@@ -28,11 +33,9 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
 
   const { pullUrl } = await api.call('get', `/projects/${ projectIdentifier }/pull-setting`)
 
-  const normalizedPatterns = patterns
-    .map(
-      (pattern) => normalizePattern(pattern, pullUrl)
-    )
-    .filter(Boolean)
+  const normalizedPatterns = patterns.map(
+    (pattern) => normalizePattern(pattern, pullUrl)
+  ).filter(Boolean)
 
   const { ref: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
 
