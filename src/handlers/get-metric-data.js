@@ -17,7 +17,7 @@ export default async (job) => {
     }
   } = job
 
-  const maxEndTime = startTime + (PERIOD * 1000 * MAX_DATAPOINT)
+  const maxEndTime = Date.parse(startTime) + (PERIOD * 1000 * MAX_DATAPOINT)
   const now = Date.now()
 
   const endTime = maxEndTime < now ? maxEndTime : now
@@ -36,7 +36,7 @@ export default async (job) => {
     distributionIdentifier,
     name: metricName,
     period: PERIOD,
-    startTime,
+    startTime: Date.parse(startTime),
     endTime
   })
 
