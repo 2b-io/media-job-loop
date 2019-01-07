@@ -21,7 +21,7 @@ const formatResponseData = (responseData) => ({
   name: METRIC_LABEL[ responseData.Label ],
   datapoints: responseData.Datapoints.map(
     (datapoint) => ({
-      timestamp: datapoint.Timestamp.getTime(),
+      timestamp: datapoint.Timestamp,
       value: datapoint.Sum
     })
   )
@@ -36,8 +36,8 @@ const formatRequestParams = ({
 }) => ({
   Namespace: 'AWS/CloudFront',
   MetricName: METRIC_NAME[ name ],
-  StartTime: new Date(Number(startTime)).toISOString(),
-  EndTime: new Date(Number(endTime)).toISOString(),
+  StartTime: startTime,
+  EndTime: endTime,
   Period: period,
   Dimensions: [
     {
@@ -53,7 +53,6 @@ const formatRequestParams = ({
 })
 
 const getMetric = async (params) => {
-  const { startTime, endTime, period } = params
   const responseData = await cloudwatch.getMetricStatistics(
     formatRequestParams(params)
   ).promise()

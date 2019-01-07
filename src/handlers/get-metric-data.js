@@ -6,6 +6,8 @@ import cloudwatch from 'services/cloudwatch'
 const PERIOD = 60
 const MAX_DATAPOINT = 1440
 
+const MAX_DATAPOINT_UPDATE = 100
+
 export default async (job) => {
   const {
     name,
@@ -17,7 +19,7 @@ export default async (job) => {
     }
   } = job
 
-  const maxEndTime = startTime + (PERIOD * 1000 * MAX_DATAPOINT)
+  const maxEndTime = Date.parse(startTime) + (PERIOD * 1000 * MAX_DATAPOINT)
   const now = Date.now()
 
   const endTime = maxEndTime < now ? maxEndTime : now
@@ -37,11 +39,18 @@ export default async (job) => {
     name: metricName,
     period: PERIOD,
     startTime,
-    endTime
+    endTime: new Date(endTime).toISOString()
   })
 
   if (datapoints.length) {
-    await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, datapoints)
+    let datapointFrom = 0
+    do {
+      const subDatapoints = datapoints.slice(datapointFrom, datapointFrom + MAX_DATAPOINT_UPDATE)
+
+      await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, subDatapoints)
+
+      datapointFrom = datapointFrom + subDatapoints.length
+    } while (datapointFrom < datapoints.length)
   }
   console.log('UPDATE_METRIC_DATA_SUCCESS')
 
@@ -51,7 +60,7 @@ export default async (job) => {
     payload: {
       projectIdentifier,
       metricName,
-      startTime: endTime - ms('5m'),
+      startTime: new Date(endTime - ms('5m')).toISOString(),
     }
   }
 }
