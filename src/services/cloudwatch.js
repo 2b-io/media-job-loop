@@ -36,8 +36,8 @@ const formatRequestParams = ({
 }) => ({
   Namespace: 'AWS/CloudFront',
   MetricName: METRIC_NAME[ name ],
-  StartTime: new Date(Number(startTime)).toISOString(),
-  EndTime: new Date(Number(endTime)).toISOString(),
+  StartTime: startTime,
+  EndTime: endTime,
   Period: period,
   Dimensions: [
     {
