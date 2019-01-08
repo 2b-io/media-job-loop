@@ -28,16 +28,11 @@ export default {
   async invalidateAll (projectIdentifier) {
     const allObjects = await api.call('get', `/projects/${ projectIdentifier }/files`)
 
-    if (allObjects.length) {
-      // delete on s3
-      await s3.delete(allObjects)
+    if (!allObjects.length) {
+      return null
     }
-
-    const { ref: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
-
-    await cloudfront.createInvalidate(distributionId, [ '/*' ])
-
-    return await cloudfront.updateDistribution(distributionId, { enabled: false })
+    // delete on s3
+    return await s3.delete(allObjects)
   }
 
 }
