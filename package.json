@@ -7,6 +7,7 @@
   "author": "LongLH <d@dapps.me>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "7.2.0",
     "amqplib": "0.5.2",
     "as-array": "2.0.0",
     "aws-sdk": "2.358.0",
@@ -23,6 +24,7 @@
     "@babel/cli": "7.1.5",
     "@babel/core": "7.1.5",
     "@babel/node": "7.0.0",
+    "@babel/plugin-transform-runtime": "7.2.0",
     "@babel/preset-env": "7.1.5",
     "babel-plugin-module-resolver": "3.1.1",
     "concurrently": "4.0.1",
@@ -30,6 +32,7 @@
     "run.env": "1.1.0"
   },
   "scripts": {
-    "start": "run.env nodemon --watch ./src --exec babel-node ./src"
+    "start": "run.env nodemon --watch ./src --exec babel-node ./src",
+    "build": "babel ./src -d ./build"
   }
 }
