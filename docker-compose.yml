@@ -11,10 +11,10 @@ services:
     ports:
       - "3006:3006"
     networks:
-      infra_cdn:
+      api:
         aliases:
           - media-job-loop
 
 networks:
-  infra_cdn:
+  api:
     external: true
