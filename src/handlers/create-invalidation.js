@@ -10,14 +10,14 @@ import {
 const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) => {
   const invalidationId = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
 
-  if (!invalidationId.Id) {
+  if (!invalidationId) {
     return null
   }
 
    await api.call(
      'patch',
      `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`,
-     { cdnInvalidationRef: invalidationId }
+     { cdnInvalidationRef: invalidationId.Id }
    )
 
   return {

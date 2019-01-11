@@ -32,18 +32,20 @@ export default async (job) => {
           lastSynchronized
         }
       }
-    } else {
-      return {
-        name: 'SYNC_S3_TO_ES',
-        when: Date.now() + ms('3d'),
-        payload: {
-          projectIdentifier,
-          maxKeys
-        }
+    }
+
+    console.log('PRUNE ES DONE!')
+    return {
+      name: 'SYNC_S3_TO_ES',
+      when: Date.now() + ms('3d'),
+      payload: {
+        projectIdentifier,
+        maxKeys
       }
     }
-    console.log('PRUNE_ES_SUCCESS')
   } catch (e) {
+    console.log('PRUNE ES INDEX NOT FOUND')
+
     return {
       name: 'SYNC_S3_TO_ES',
       when: Date.now() + ms('3d'),
