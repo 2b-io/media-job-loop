@@ -47,14 +47,14 @@ export default async (job) => {
     return null
   }
 
-  const startTime = Date.now()
+  const startTime = new Date().toISOString()
 
   return [ {
     name: 'SYNC_S3_TO_ES',
     when: startTime,
     payload: {
       projectIdentifier,
-      maxKeys: 10
+      maxKeys: 100
     }
   }, {
     name: 'GET_METRIC_DATA',

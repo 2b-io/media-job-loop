@@ -4,7 +4,7 @@ import s3 from 'infrastructure/s3'
 const MAX_KEYS = 1000
 
 export default {
-  async delete (keys = []) {
+  async delete(keys = []) {
     let keyFrom = 0
     do {
       const subKeys = keys.slice(keyFrom, keyFrom + MAX_KEYS)
@@ -18,13 +18,13 @@ export default {
       keyFrom = keyFrom + subKeys.length
     } while (keyFrom < keys.length)
   },
-  async head (key) {
+  async head(key) {
     return await s3.headObject({
       Bucket: config.aws.s3.bucket,
       Key: key
     }).promise()
   },
-  async list ({ params }) {
+  async list({ params }) {
     return await s3.listObjectsV2({
       Bucket: config.aws.s3.bucket,
       ...params

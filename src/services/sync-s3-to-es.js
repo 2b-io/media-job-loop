@@ -52,13 +52,16 @@ const fetchPage = async (
 
           const { originUrl, isOrigin, expires, lastModified, lastSynchronized } = objectElasticsearch
 
+          console.log('FILE FOUND... UPDATE')
+
           await api.call(
             'put',
             `/projects/${ projectIdentifier }/files/${ encodeURIComponent(key) }`,
             { originUrl, expires, isOrigin, lastModified, lastSynchronized }
           )
         } catch (e) {
-          console.log('FILE NOT FOUND')
+          console.log('FILE NOT FOUND... CREATE')
+
           await api.call('post', `/projects/${ projectIdentifier }/files`, { ...objectElasticsearch })
         }
       } catch (error) {
@@ -74,10 +77,10 @@ const fetchPage = async (
     })
   )
 
-  if (expiredS3Objects) {
+  if (expiredS3Objects.length) {
     const deleteResult = await s3.delete(expiredS3Objects)
 
-    console.log(deleteResult)
+    console.log(`DELETE EXPIRED OBJECTS... ${ expiredS3Objects.length }`)
   }
 
   return {
