@@ -8,17 +8,19 @@ import {
 } from 'services/invalidation'
 
 const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) => {
-  const invalidationId = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
+  const invalidation = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
 
-  if (!invalidationId) {
+  if (!invalidation) {
     return null
   }
 
-   await api.call(
-     'patch',
-     `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`,
-     { cdnInvalidationRef: invalidationId.Id }
-   )
+  const { Id: invalidationId } = invalidation
+
+  await api.call(
+    'patch',
+    `/projects/${ projectIdentifier }/invalidations/${ invalidationIdentifier }`,
+    { cdnInvalidationRef: invalidationId }
+  )
 
   return {
     name: 'CHECK_INVALIDATION',

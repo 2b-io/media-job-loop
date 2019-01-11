@@ -28,7 +28,9 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
   //check invalidation all
   if (patterns.indexOf('*') !== -1 || patterns.indexOf('/*') !== -1 ) {
     // delete all files in project
-    return await common.invalidateAll(projectIdentifier)
+    await common.invalidateAll(projectIdentifier)
+
+    return null
   }
 
   const { pullUrl } = await api.call('get', `/projects/${ projectIdentifier }/pull-setting`)
