@@ -3,9 +3,9 @@ export default {
   apiUrl: process.env.API_URL,
   apiSecretKey: process.env.API_SECRET_KEY,
   amq: {
-    host: process.env.AMQ_HOST,
-    queue: process.env.AMQ_QUEUE,
-    prefix: process.env.AMQ_PREFIX
+    host: process.env.RABBITMQ_URI,
+    queue: process.env.RABBITMQ_QUEUE,
+    prefix: process.env.RABBITMQ_PREFIX
   },
   aws: {
     cloudfront: {

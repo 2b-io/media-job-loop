@@ -8,11 +8,9 @@ import {
 } from 'services/invalidation'
 
 const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) => {
-  const {
-    Id: invalidationId
-  } = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
+  const invalidationId = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
 
-  if (!invalidationId) {
+  if (!invalidationId.Id) {
     return null
   }
 
