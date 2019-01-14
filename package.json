@@ -33,6 +33,6 @@
   },
   "scripts": {
     "start": "run.env nodemon --watch ./src --exec babel-node ./src",
-    "build": "babel ./src -d ./build"
+    "build": "rm -rf ./build && babel ./src -d ./build && cp -r ./src/handlers/send-email/templates ./build/handlers/send-email"
   }
 }
