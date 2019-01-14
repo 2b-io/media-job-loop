@@ -1,14 +1,14 @@
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
-import file from './file'
+import { searchByContentType } from './search'
 import s3 from 'services/s3'
 
-const contentType = async (projectIdentifier, contentType) => {
-  const listFiles = await file.searchByContentType(projectIdentifier, contentType)
+const invalidateBycontentType = async (projectIdentifier, contentType) => {
+  const files = await searchByContentType(projectIdentifier, contentType)
 
   // delete on s3
-  if (listFiles.length) {
-    await s3.delete(listFiles)
+  if (files.length) {
+    await s3.delete(files)
   }
 
   // delete on cloudfront
@@ -19,4 +19,4 @@ const contentType = async (projectIdentifier, contentType) => {
   return null
 }
 
-export default contentType
+export default invalidateBycontentType

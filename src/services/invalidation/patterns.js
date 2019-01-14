@@ -3,7 +3,7 @@ import { URL } from 'url'
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
 import s3 from 'services/s3'
-import file from './file'
+import { searchByProject, searchByPatterns } from './search'
 
 const normalizePattern = (path, pullUrl) => {
   try {
@@ -30,11 +30,11 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
   //check patterns = * or /*
   if (patterns.indexOf('*') !== -1 || patterns.indexOf('/*') !== -1 ) {
     // get all files in project
-    const listFiles = await file.searchByProject(projectIdentifier)
+    const files = await searchByProject(projectIdentifier)
 
-    if (listFiles.length) {
+    if (files.length) {
       // delete on s3
-      await s3.delete(listFiles)
+      await s3.delete(files)
     }
 
     return await cloudfront.createInvalidation(distributionId, [ '/*' ])
@@ -47,11 +47,11 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
   ).filter(Boolean)
 
   if (normalizedPatterns.length) {
-    const listFiles = await file.searchByPatterns(projectIdentifier, normalizedPatterns)
+    const files = await searchByPatterns(projectIdentifier, normalizedPatterns)
 
-    if (listFiles.length) {
+    if (files.length) {
       // delete on s3
-      await s3.delete(listFiles)
+      await s3.delete(files)
     }
     // delete on distribution
     const cloudfrontPatterns = normalizedPatterns

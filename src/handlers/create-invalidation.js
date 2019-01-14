@@ -1,15 +1,15 @@
 import api from 'services/api'
 import {
-  invalidationByPattern,
-  invalidationByProject,
-  invalidationByPresetHash,
-  invalidationByContentType
+  invalidateByPattern,
+  invalidateByProject,
+  invalidateByPresetHash,
+  invalidateByContentType
 } from 'services/invalidation'
 
-const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) => {
+const invalidatePatterns = async (projectIdentifier, invalidationIdentifier) => {
   const {
     Id: invalidationId
-  } = await invalidationByPattern(projectIdentifier, invalidationIdentifier)
+  } = await invalidateByPattern(projectIdentifier, invalidationIdentifier)
 
   if (!invalidationId) {
     return null
@@ -46,16 +46,16 @@ export default async (job) => {
   }
 
   if (presetHash) {
-    return await invalidationByPresetHash(projectIdentifier, presetHash)
+    return await invalidateByPresetHash(projectIdentifier, presetHash)
   }
 
   if (contentType) {
-    return await invalidationByContentType(projectIdentifier, contentType)
+    return await invalidateByContentType(projectIdentifier, contentType)
   }
 
   if (invalidationIdentifier) {
-    return await invalidationPatterns(projectIdentifier, invalidationIdentifier)
+    return await invalidatePatterns(projectIdentifier, invalidationIdentifier)
   }
 
-  return await invalidationByProject(projectIdentifier)
+  return await invalidateByProject(projectIdentifier)
 }

@@ -1,14 +1,14 @@
-import file from './file'
+import { searchByProject } from './search'
 
-const invalidationByProject = async (projectIdentifier) => {
-  const listFiles = await file.searchByProject(projectIdentifier)
+const invalidateByProject = async (projectIdentifier) => {
+  const files = await searchByProject(projectIdentifier)
 
-  if (listFiles.length) {
+  if (files.length) {
     // delete on s3
-    await s3.delete(listFiles)
+    await s3.delete(files)
   }
 
   return null
 }
 
-export default invalidationByProject
+export default invalidateByProject

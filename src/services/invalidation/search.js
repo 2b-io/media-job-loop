@@ -1,6 +1,6 @@
 import api from 'services/api'
 
-const searchByPatterns = async (projectIdentifier, patterns) => {
+export const searchByPatterns = async (projectIdentifier, patterns) => {
   const allObjects = await patterns.reduce(
     async (previousJob, pattern) => {
       const prevObjects = await previousJob || []
@@ -17,21 +17,14 @@ const searchByPatterns = async (projectIdentifier, patterns) => {
   return allObjects
 }
 
-const searchByPresetHash = async (projectIdentifier, presetHash) => {
+export const searchByPresetHash = async (projectIdentifier, presetHash) => {
   return await api.call('get', `/projects/${ projectIdentifier }/files?preset=${ presetHash }`)
 }
 
-const searchByContentType = async (projectIdentifier, contentType) => {
+export const searchByContentType = async (projectIdentifier, contentType) => {
   return await api.call('get', `/projects/${ projectIdentifier }/files?contentType=${ encodeURIComponent(contentType) }`)
 }
 
-const searchByProject = async (projectIdentifier) => {
+export const searchByProject = async (projectIdentifier) => {
   return await api.call('get', `/projects/${ projectIdentifier }/files`)
-}
-
-export default {
-  searchByContentType,
-  searchByPatterns,
-  searchByPresetHash,
-  searchByProject
 }
