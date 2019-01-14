@@ -3,8 +3,8 @@ import cloudfront from 'services/cloudfront'
 import file from './file'
 import s3 from 'services/s3'
 
-const presetHash = async (projectIdentifier, presetHash) => {
-  const listFiles = await file.searchByPresetHash(projectIdentifier, presetHash)
+const contentType = async (projectIdentifier, contentType) => {
+  const listFiles = await file.searchByContentType(projectIdentifier, contentType)
 
   // delete on s3
   if (listFiles.length) {
@@ -19,4 +19,4 @@ const presetHash = async (projectIdentifier, presetHash) => {
   return null
 }
 
-export default presetHash
+export default contentType

@@ -1,3 +1,4 @@
-export { default as invalidationPatternService } from './patterns'
-export { default as invalidationProjectService } from './project'
-export { default as invalidationPresetService } from './preset'
+export { default as invalidationByContentType } from './contentType'
+export { default as invalidationByPattern } from './patterns'
+export { default as invalidationByProject } from './project'
+export { default as invalidationByPresetHash } from './preset'
