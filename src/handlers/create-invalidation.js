@@ -1,16 +1,15 @@
-import ms from 'ms'
-
 import api from 'services/api'
 import {
-  invalidationPatternService,
-  invalidationProjectService,
-  invalidationPresetService
+  invalidateByPattern,
+  invalidateByProject,
+  invalidateByPresetHash,
+  invalidateByContentType
 } from 'services/invalidation'
 
-const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) => {
+const invalidatePatterns = async (projectIdentifier, invalidationIdentifier) => {
   const {
     Id: invalidationId
-  } = await invalidationPatternService(projectIdentifier, invalidationIdentifier)
+  } = await invalidateByPattern(projectIdentifier, invalidationIdentifier)
 
   if (!invalidationId) {
     return null
@@ -32,18 +31,6 @@ const invalidationPatterns = async (projectIdentifier, invalidationIdentifier) =
   }
 }
 
-const invalidationProject = async (projectIdentifier) => {
-  return await invalidationProjectService(projectIdentifier)
-}
-
-const invalidationPresetHash = async (projectIdentifier, presetHash) => {
-  return await invalidationPresetService.invalidatePresetHash(projectIdentifier, presetHash)
-}
-
-const invalidationContentType = async (projectIdentifier, contentType) => {
-  return await invalidationPresetService.invalidateContentType(projectIdentifier, contentType)
-}
-
 export default async (job) => {
   const {
     payload: {
@@ -59,16 +46,16 @@ export default async (job) => {
   }
 
   if (presetHash) {
-    return await invalidationPresetHash(projectIdentifier, presetHash)
+    return await invalidateByPresetHash(projectIdentifier, presetHash)
   }
 
   if (contentType) {
-    return await invalidationContentType(projectIdentifier, contentType)
+    return await invalidateByContentType(projectIdentifier, contentType)
   }
 
   if (invalidationIdentifier) {
-    return await invalidationPatterns(projectIdentifier, invalidationIdentifier)
+    return await invalidatePatterns(projectIdentifier, invalidationIdentifier)
   }
 
-  return await invalidationProject(projectIdentifier)
+  return await invalidateByProject(projectIdentifier)
 }

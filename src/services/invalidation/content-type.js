@@ -1,10 +1,10 @@
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
-import { searchByPresetHash } from './search'
+import { searchByContentType } from './search'
 import s3 from 'services/s3'
 
-const invalidateBypresetHash = async (projectIdentifier, presetHash) => {
-  const files = await searchByPresetHash(projectIdentifier, presetHash)
+const invalidateBycontentType = async (projectIdentifier, contentType) => {
+  const files = await searchByContentType(projectIdentifier, contentType)
 
   // delete on s3
   if (files.length) {
@@ -19,4 +19,4 @@ const invalidateBypresetHash = async (projectIdentifier, presetHash) => {
   return null
 }
 
-export default invalidateBypresetHash
+export default invalidateBycontentType

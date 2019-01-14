@@ -3,7 +3,7 @@ import { URL } from 'url'
 import api from 'services/api'
 import cloudfront from 'services/cloudfront'
 import s3 from 'services/s3'
-import common from './common'
+import { searchByProject, searchByPatterns } from './search'
 
 const normalizePattern = (path, pullUrl) => {
   try {
@@ -25,10 +25,19 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
 
   const project = await api.call('get', `/projects/${ projectIdentifier }`)
 
-  //check invalidation all
+  const { ref: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
+
+  //check patterns = * or /*
   if (patterns.indexOf('*') !== -1 || patterns.indexOf('/*') !== -1 ) {
-    // delete all files in project
-    return await common.invalidateAll(projectIdentifier)
+    // get all files in project
+    const files = await searchByProject(projectIdentifier)
+
+    if (files.length) {
+      // delete on s3
+      await s3.delete(files)
+    }
+
+    return await cloudfront.createInvalidation(distributionId, [ '/*' ])
   }
 
   const { pullUrl } = await api.call('get', `/projects/${ projectIdentifier }/pull-setting`)
@@ -37,14 +46,12 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
     (pattern) => normalizePattern(pattern, pullUrl)
   ).filter(Boolean)
 
-  const { ref: distributionId } = await api.call('get', `/projects/${ projectIdentifier }/infrastructure`)
-
   if (normalizedPatterns.length) {
-    const allObjects = await common.searchByPatterns(projectIdentifier, normalizedPatterns)
+    const files = await searchByPatterns(projectIdentifier, normalizedPatterns)
 
-    if (allObjects.length) {
+    if (files.length) {
       // delete on s3
-      await s3.delete(allObjects)
+      await s3.delete(files)
     }
     // delete on distribution
     const cloudfrontPatterns = normalizedPatterns
@@ -92,9 +99,9 @@ const invalidateByPatterns = async (projectIdentifier, invalidationIdentifier) =
       )
       .filter(Boolean)
 
-      return await cloudfront.createInvalidate(distributionId, cloudfrontPatterns)
+      return await cloudfront.createInvalidation(distributionId, cloudfrontPatterns)
   } else {
-    return await cloudfront.createInvalidate(distributionId, patterns)
+    return await cloudfront.createInvalidation(distributionId, patterns)
   }
 }
 

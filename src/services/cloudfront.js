@@ -4,7 +4,7 @@ import cloudfront from 'infrastructure/cloudfront'
 import config from 'infrastructure/config'
 import route53 from 'services/route-53'
 
-const createInvalidate = async (distributionId, patterns = []) => {
+const createInvalidation = async (distributionId, patterns = []) => {
   const params = {
     DistributionId: distributionId,
     InvalidationBatch: {
@@ -286,5 +286,5 @@ export default {
   getDistribution,
   updateDistribution,
   getInvalidation,
-  createInvalidate
+  createInvalidation
 }

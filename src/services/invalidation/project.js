@@ -1,7 +1,14 @@
-import common from './common'
+import { searchByProject } from './search'
 
 const invalidateByProject = async (projectIdentifier) => {
-  return await common.invalidateAll(projectIdentifier)
+  const files = await searchByProject(projectIdentifier)
+
+  if (files.length) {
+    // delete on s3
+    await s3.delete(files)
+  }
+
+  return null
 }
 
 export default invalidateByProject
