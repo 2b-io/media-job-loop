@@ -41,5 +41,6 @@ export default {
   pulling: {
     shortBreak: process.env.PULLING_SHORT_BREAK,
     longBreak: process.env.PULLING_LONG_BREAK
-  }
+  },
+  syncS3ToEsMaxKeys: process.env.SYNC_S3_TO_ES_MAX_KEYS
 }
