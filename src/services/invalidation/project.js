@@ -1,4 +1,5 @@
 import { searchByProject } from './search'
+import s3 from 'services/s3'
 
 const invalidateByProject = async (projectIdentifier) => {
   const files = await searchByProject(projectIdentifier)
