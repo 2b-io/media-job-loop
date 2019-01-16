@@ -31,7 +31,8 @@ export default {
       region: process.env.AWS_S3_REGION,
       accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
-      version: process.env.AWS_S3_VERSION
+      version: process.env.AWS_S3_VERSION,
+      maxKeys: process.env.AWS_S3_MAX_KEY
     }
   },
   sendgrid: {
@@ -41,5 +42,6 @@ export default {
   pulling: {
     shortBreak: process.env.PULLING_SHORT_BREAK,
     longBreak: process.env.PULLING_LONG_BREAK
-  }
+  },
+  syncS3ToEsMaxFile: process.env.SYNC_S3_TO_ES_MAX_FILE
 }

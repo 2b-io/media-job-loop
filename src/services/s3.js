@@ -1,13 +1,11 @@
 import config from 'infrastructure/config'
 import s3 from 'infrastructure/s3'
 
-const MAX_KEYS = 1000
-
 export default {
   async delete(keys = []) {
     let keyFrom = 0
     do {
-      const subKeys = keys.slice(keyFrom, keyFrom + MAX_KEYS)
+      const subKeys = keys.slice(keyFrom, keyFrom + config.s3.maxKeys)
       await s3.deleteObjects({
         Bucket: s3.config.bucket,
         Delete: {
