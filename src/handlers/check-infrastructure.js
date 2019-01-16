@@ -54,7 +54,7 @@ export default async (job) => {
     when: startTime,
     payload: {
       projectIdentifier,
-      maxKeys: config.syncS3ToEsMaxKeys
+      maxKeys: config.syncS3ToEsMaxFile
     }
   }, {
     name: 'GET_METRIC_DATA',

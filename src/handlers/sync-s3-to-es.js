@@ -1,7 +1,6 @@
 import ms from 'ms'
 import request from 'superagent'
 
-import config from 'infrastructure/config'
 import api from 'services/api'
 import syncS3ToEsService from 'services/sync-s3-to-es'
 
@@ -49,9 +48,9 @@ export default async (job) => {
     name: 'PRUNE_ES',
     when: Date.now(),
     payload: {
-      maxKeys,
       projectIdentifier,
-      lastSynchronized
+      lastSynchronized,
+      maxKeys
     }
   }
 }
