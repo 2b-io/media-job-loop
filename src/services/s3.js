@@ -5,7 +5,7 @@ export default {
   async delete(keys = []) {
     let keyFrom = 0
     do {
-      const subKeys = keys.slice(keyFrom, keyFrom + config.s3.maxKeys)
+      const subKeys = keys.slice(keyFrom, keyFrom + config.aws.s3.maxKeys)
       await s3.deleteObjects({
         Bucket: s3.config.bucket,
         Delete: {

@@ -18,7 +18,7 @@ export default async (job) => {
   const { isTruncated } = await api.call(
     'delete',
     `/projects/${ projectIdentifier }/files`,
-    { lastSynchronized: new Date(lastSynchronized).toISOString(), maxKeys }
+    { lastSynchronized, maxKeys }
   )
 
   if (isTruncated) {

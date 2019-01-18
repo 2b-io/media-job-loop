@@ -13,7 +13,6 @@ export default async (job) => {
     payload: {
       projectIdentifier,
       continuationToken,
-      lastSynchronized = new Date().toISOString(),
       maxKeys
     }
   } = job
@@ -23,6 +22,7 @@ export default async (job) => {
   if (!project.isActive || project.isDeleted) {
     return null
   }
+  const lastSynchronized = new Date().toISOString()
 
   const {
     nextContinuationToken,
