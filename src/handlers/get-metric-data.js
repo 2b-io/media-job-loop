@@ -8,6 +8,24 @@ const MAX_DATAPOINT = 1440
 
 const MAX_DATAPOINT_UPDATE = 100
 
+const checkDataMetric = async (projectIdentifier, metricName, data) => {
+  const dataMetric = await Promise.all(
+    await data.map(async ({ timestamp, value }) => {
+      try {
+        await api.call('head', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints/${ timestamp.toISOString() }`)
+        return null
+      } catch (e) {
+        return {
+          timestamp,
+          value
+        }
+      }
+    })
+  )
+
+  return dataMetric.filter(Boolean)
+}
+
 export default async (job) => {
   const {
     name,
@@ -47,7 +65,11 @@ export default async (job) => {
     do {
       const subDatapoints = datapoints.slice(datapointFrom, datapointFrom + MAX_DATAPOINT_UPDATE)
 
-      await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, subDatapoints)
+      const dataMetric = await checkDataMetric(projectIdentifier, metricName, subDatapoints)
+
+      if (dataMetric.length) {
+        await api.call('patch', `/projects/${ projectIdentifier }/metrics/${ metricName.toLowerCase() }/datapoints`, dataMetric)
+      }
 
       datapointFrom = datapointFrom + subDatapoints.length
     } while (datapointFrom < datapoints.length)
