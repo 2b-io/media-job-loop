@@ -18,7 +18,7 @@ export default async (job) => {
 
   const files = await api.call(
     'get',
-    `/projects/${ projectIdentifier }/files?lastSynchronized=${ lastSynchronized }&from=0&size=${ config.syncS3ToEsMaxFile }`
+    `/projects/${ projectIdentifier }/files?lastSynchronized=${ encodeURIComponent(lastSynchronized) }&from=0&size=${ config.syncS3ToEsMaxFile }`
   )
 
   if (!files.length) {
