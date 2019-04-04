@@ -4,7 +4,7 @@ import api from 'services/api'
 import cloudwatch from 'services/cloudwatch'
 
 const PERIOD = 60
-const MAX_DATAPOINT = 1440
+const MAX_DATAPOINT = 250
 
 const MAX_DATAPOINT_UPDATE = 100
 
