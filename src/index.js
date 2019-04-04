@@ -92,9 +92,12 @@ const main = async () => {
 
     if (nextJobs && nextJobs.length) {
       await sendJobs(nextJobs)
+
       if (stateWorker !== 'idle') {
         console.log('JOB IDLE')
+
         idleTime = new Date().toISOString()
+
         await api.call(
           'post',
           `/jobs/logs`,
