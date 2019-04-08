@@ -4,7 +4,6 @@ import api from 'services/api'
 import cloudwatch from 'services/cloudwatch'
 
 const PERIOD = 60
-const MAX_DATAPOINT = 360
 
 const MAX_DATAPOINT_UPDATE = 100
 
@@ -37,7 +36,7 @@ export default async (job) => {
     }
   } = job
 
-  const maxEndTime = Date.parse(startTime) + (PERIOD * 1000 * MAX_DATAPOINT)
+  const maxEndTime = Date.parse(startTime) + ms('30m')
   const now = Date.now()
 
   const endTime = maxEndTime < now ? maxEndTime : now
